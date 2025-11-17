@@ -30,17 +30,15 @@ function enrichSampleWithRelatedData(sample) {
         if (campaign) {
             enriched.campaign = campaign;
 
-            if (campaign.location_id) {
-                enriched.location = getLocationById(campaign.location_id);
+            // Matryoshka effect: location and organisation are embedded in campaign
+            // Campaign contains all the information - just reference them directly
+            if (campaign.location) {
+                enriched.location = campaign.location;
             }
-            if (campaign.organisation_id) {
-                enriched.organisation = getOrganisationById(campaign.organisation_id);
+            if (campaign.organisation) {
+                enriched.organisation = campaign.organisation;
             }
         }
-    }
-
-    if (sample.location_id && !enriched.location) {
-        enriched.location = getLocationById(sample.location_id);
     }
 
     return enriched;
