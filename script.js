@@ -273,71 +273,9 @@ function showCampaignDetail(campaignId) {
     // Get technology information
     const technology = technologyMap[campaign.technology_id] || { name: 'Unknown', description: 'No technology information available', category: 'N/A' };
 
-    const content = `
-        <div class="breadcrumb">
-            <a onclick="showView('overview')">Overview</a> >
-            <a onclick="showView('${campaign.target_litter_category}')">${campaign.target_litter_category.charAt(0).toUpperCase() + campaign.target_litter_category.slice(1)} Campaigns</a> >
-            ${campaign.title}
-        </div>
-        <h2>${campaign.title}</h2>
-
+    const samplesSection = campaignSamples.length > 0 ? `
         <div class="section">
-            <h3>Campaign Overview</h3>
-            <p><strong>Campaign Code:</strong> ${campaign.campaign_code}</p>
-            <p><strong>Status:</strong> <span class="status-${campaign.active ? 'active' : 'inactive'}">${campaign.active ? 'Active' : 'Inactive'}</span></p>
-            <p><strong>Category:</strong> ${campaign.target_litter_category.toUpperCase()}</p>
-            <p><strong>Duration:</strong> ${formatDate(campaign.campaign_date_start)} - ${formatDate(campaign.campaign_date_end)}</p>
-            <p><strong>Sampling Stations:</strong> ${campaign.number_of_sampling_stations}</p>
-            <p><strong>Budget:</strong> ${campaign.budget}</p>
-            <br>
-            <p>${campaign.description}</p>
-            ${campaign.notes ? `
-                <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-left: 3px solid #ffc107; border-radius: 4px;">
-                    <strong>Notes:</strong> ${campaign.notes}
-                </div>
-            ` : ''}
-        </div>
-
-        <!-- Technologies Section - Prominent -->
-        <div class="section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px;">
-            <h3 style="color: white; margin-top: 0;">Technology Used</h3>
-            <div style="display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center;">
-                <div style="font-size: 48px; opacity: 0.3;">
-                    <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 8px;"></div>
-                </div>
-                <div>
-                    <h4 style="color: white; margin: 0 0 8px 0; font-size: 24px;">${technology.name}</h4>
-                    <p style="margin: 0 0 8px 0; opacity: 0.9;">${technology.description}</p>
-                    <div style="display: flex; gap: 10px; margin-top: 12px;">
-                        <span style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                            ${technology.category}
-                        </span>
-                        <span style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;" onclick="showSolutionDetail('${technology.name}')" style="cursor: pointer;">
-                            View Details →
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Location & Organization - Compact -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div class="section" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                <h4 style="margin-top: 0; font-size: 16px; color: #666;">Location</h4>
-                <p style="margin: 5px 0; font-size: 14px;"><strong>${campaign.location.site_name || campaign.location.site}</strong></p>
-                <p style="margin: 5px 0; font-size: 13px; color: #666;">${campaign.location.water_body_name} • ${campaign.location.location}</p>
-            </div>
-            <div class="section" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                <h4 style="margin-top: 0; font-size: 16px; color: #666;">Organisation</h4>
-                <p style="margin: 5px 0; font-size: 14px;"><strong>${campaign.organisation.name}</strong></p>
-                <p style="margin: 5px 0; font-size: 13px; color: #666;">${campaign.organisation.city} • ${campaign.organisation.referent_email}</p>
-            </div>
-        </div>
-
-        <!-- Samples Section - At the bottom as a list -->
-        ${campaignSamples.length > 0 ? `
-        <div class="section">
-            <h3>Collected Samples (${campaignSamples.length})</h3>
+            <h3>Campaign Samples (${campaignSamples.length})</h3>
             <div class="campaign-list">
                 ${campaignSamples.map(sample => {
                     const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === sample.id);
@@ -384,12 +322,73 @@ function showCampaignDetail(campaignId) {
                 }).join('')}
             </div>
         </div>
-        ` : `
+    ` : `
         <div class="section">
-            <h3>Collected Samples</h3>
+            <h3>Campaign Samples</h3>
             <p style="color: #666; font-style: italic;">No samples have been collected for this campaign yet.</p>
         </div>
-        `}
+    `;
+
+    const content = `
+        <div class="breadcrumb">
+            <a onclick="showView('overview')">Overview</a> >
+            <a onclick="showView('${campaign.target_litter_category}')">${campaign.target_litter_category.charAt(0).toUpperCase() + campaign.target_litter_category.slice(1)} Campaigns</a> >
+            ${campaign.title}
+        </div>
+        <h2>${campaign.title}</h2>
+
+        <div class="campaign-details">
+            <div>
+                <div class="section">
+                    <h3>Campaign Overview</h3>
+                    <p><strong>Campaign Code:</strong> ${campaign.campaign_code}</p>
+                    <p><strong>Status:</strong> <span class="status-${campaign.active ? 'active' : 'inactive'}">${campaign.active ? 'Active' : 'Inactive'}</span></p>
+                    <p><strong>Category:</strong> ${campaign.target_litter_category.toUpperCase()}</p>
+                    <p><strong>Duration:</strong> ${formatDate(campaign.campaign_date_start)} - ${formatDate(campaign.campaign_date_end)}</p>
+                    <p><strong>Sampling Stations:</strong> ${campaign.number_of_sampling_stations}</p>
+                    <p><strong>Budget:</strong> ${campaign.budget}</p>
+                    <br>
+                    <p>${campaign.description}</p>
+                    ${campaign.notes ? `
+                        <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-left: 3px solid #ffc107; border-radius: 4px;">
+                            <strong>Notes:</strong> ${campaign.notes}
+                        </div>
+                    ` : ''}
+                </div>
+
+                <div class="section">
+                    <h3>Technology</h3>
+                    <p><strong>Name:</strong> ${technology.name}</p>
+                    <p><strong>Description:</strong> ${technology.description}</p>
+                    <p><strong>Category:</strong> ${technology.category}</p>
+                    <button class="back-btn" onclick="showSolutionDetail('${technology.name}')" style="margin-top: 10px;">View Technology Details</button>
+                </div>
+
+                <div class="section">
+                    <h3>Organisation</h3>
+                    <p><strong>Name:</strong> ${campaign.organisation.name}</p>
+                    <p><strong>Address:</strong> ${campaign.organisation.address}, ${campaign.organisation.city}, ${campaign.organisation.postal_code}</p>
+                    <p><strong>Contact:</strong> ${campaign.organisation.referent_email}</p>
+                    ${campaign.organisation.website ? `<p><strong>Website:</strong> <a href="${campaign.organisation.website}" target="_blank" style="color: #007bff;">${campaign.organisation.website}</a></p>` : ''}
+                    <p><strong>VAT:</strong> ${campaign.organisation.vat_number}</p>
+                </div>
+
+                <div class="section">
+                    <h3>Location Details</h3>
+                    <p><strong>Site:</strong> ${campaign.location.site_name || campaign.location.site}</p>
+                    <p><strong>Water Body:</strong> ${campaign.location.water_body_name} (${campaign.location.water_body_type})</p>
+                    <p><strong>Location:</strong> ${campaign.location.location}</p>
+                    ${campaign.location.main_river ? `<p><strong>Main River:</strong> ${campaign.location.main_river}</p>` : ''}
+                    <p><strong>Coordinates:</strong> ${campaign.location.start_latitude}, ${campaign.location.start_longitude}</p>
+                    <p><strong>Timezone:</strong> ${campaign.location.timezone}</p>
+                    ${campaign.location.is_demo_site ? `<p><span class="tech-tag" style="background: #17a2b8;">Demo Site</span></p>` : ''}
+                </div>
+            </div>
+
+            <div>
+                ${samplesSection}
+            </div>
+        </div>
     `;
 
     document.getElementById('campaign-content').innerHTML = content;
