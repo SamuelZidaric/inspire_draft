@@ -1,0 +1,801 @@
+{
+  "Manta Net": {
+    "name": "Manta Net",
+    "category": "Detection",
+    "trl": "9",
+    "targetEnvironment": "Marine Surface Waters",
+    "description": "High-efficiency surface trawling net designed for microplastic sampling with minimal marine life disturbance.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "9",
+        "description": "Fully deployed and operational"
+      },
+      "Target Environment": {
+        "value": "Marine Surface",
+        "description": "0-50cm depth sampling"
+      },
+      "Mesh Size": {
+        "value": "333 μm",
+        "description": "Optimal for microplastic capture"
+      },
+      "Deployment Method": {
+        "value": "Ship-towed",
+        "description": "Requires research vessel"
+      }
+    },
+    "performance": {
+      "Collection Efficiency": {
+        "value": "95%",
+        "unit": "capture rate"
+      },
+      "Operating Cost": {
+        "value": "€150",
+        "unit": "per deployment"
+      },
+      "Processing Speed": {
+        "value": "2.5",
+        "unit": "km/hour"
+      },
+      "Sample Volume": {
+        "value": "0.5-2.0",
+        "unit": "m³/min"
+      }
+    },
+    "applications": [
+      "Microplastic monitoring",
+      "Water quality assessment",
+      "Marine debris surveys"
+    ],
+    "advantages": [
+      "High capture efficiency",
+      "Standardized protocol",
+      "Minimal ecosystem impact"
+    ],
+    "limitations": [
+      "Weather dependent",
+      "Requires specialized vessel",
+      "Limited depth range"
+    ],
+    "sampleData": [
+      {
+        "timestamp": "2024-09-25T14:30:00Z",
+        "location": "Baltic Sea - 59.8586°N, 23.6455°E",
+        "microplastic_count": 847,
+        "dominant_material": "PE/PP (67%)",
+        "size_distribution": "0.3-5.0mm",
+        "density": "2.3 particles/m³",
+        "sample_volume": "1.2 m³"
+      },
+      {
+        "timestamp": "2024-09-25T16:45:00Z",
+        "location": "Baltic Sea - 59.8621°N, 23.6489°E",
+        "microplastic_count": 923,
+        "dominant_material": "PET (41%)",
+        "size_distribution": "0.5-3.2mm",
+        "density": "2.8 particles/m³",
+        "sample_volume": "1.1 m³"
+      }
+    ]
+  },
+  "Marine LitterWatch App": {
+    "name": "Marine LitterWatch App",
+    "category": "Detection",
+    "trl": "9",
+    "targetEnvironment": "Coastal Areas & Beaches",
+    "description": "Citizen science mobile application for standardized marine litter reporting and data collection.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "9",
+        "description": "Widely deployed across Europe"
+      },
+      "Target Environment": {
+        "value": "Coastal/Beach",
+        "description": "Shoreline and near-shore areas"
+      },
+      "Data Standards": {
+        "value": "OSPAR Protocol",
+        "description": "Standardized reporting format"
+      },
+      "User Base": {
+        "value": "Global",
+        "description": "Available in 24 languages"
+      }
+    },
+    "performance": {
+      "User Engagement": {
+        "value": "85%",
+        "unit": "completion rate"
+      },
+      "Operating Cost": {
+        "value": "€0",
+        "unit": "per report"
+      },
+      "Data Quality": {
+        "value": "92%",
+        "unit": "accuracy score"
+      },
+      "Response Time": {
+        "value": "24",
+        "unit": "hours average"
+      }
+    },
+    "applications": [
+      "Citizen science monitoring",
+      "Beach litter surveys",
+      "Policy impact assessment"
+    ],
+    "advantages": [
+      "Zero operational cost",
+      "Large-scale data collection",
+      "Real-time reporting"
+    ],
+    "limitations": [
+      "User training required",
+      "Data quality variability",
+      "Geographic coverage gaps"
+    ],
+    "sampleData": [
+      {
+        "timestamp": "2024-09-25T10:15:00Z",
+        "location": "Barceloneta Beach, Spain",
+        "user_id": "volunteer_0847",
+        "litter_types": "Plastic bottles (15), Cigarette butts (47), Food wrappers (12)",
+        "survey_area": "100m transect",
+        "total_items": 74,
+        "photo_quality": "Excellent"
+      },
+      {
+        "timestamp": "2024-09-25T15:22:00Z",
+        "location": "Brighton Beach, UK",
+        "user_id": "volunteer_0923",
+        "litter_types": "Plastic bags (8), Bottle caps (23), Fishing gear (3)",
+        "survey_area": "100m transect",
+        "total_items": 34,
+        "photo_quality": "Good"
+      }
+    ]
+  },
+  "Citizen Engagement": {
+    "name": "Citizen Engagement",
+    "category": "Detection",
+    "trl": "8",
+    "targetEnvironment": "All Environments",
+    "description": "Comprehensive citizen science framework involving training, tools, and community coordination.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "8",
+        "description": "Proven in operational environment"
+      },
+      "Target Environment": {
+        "value": "Multi-environment",
+        "description": "Coastal, riverine, urban areas"
+      },
+      "Training Protocol": {
+        "value": "Standardized",
+        "description": "2-day certification program"
+      },
+      "Community Size": {
+        "value": "Variable",
+        "description": "10-500 participants per campaign"
+      }
+    },
+    "performance": {
+      "Participation Rate": {
+        "value": "78%",
+        "unit": "retention rate"
+      },
+      "Training Cost": {
+        "value": "€45",
+        "unit": "per participant"
+      },
+      "Data Contribution": {
+        "value": "35%",
+        "unit": "of total dataset"
+      },
+      "Quality Score": {
+        "value": "88%",
+        "unit": "vs. expert data"
+      }
+    },
+    "applications": [
+      "Community monitoring",
+      "Education and awareness",
+      "Long-term surveillance"
+    ],
+    "advantages": [
+      "High community buy-in",
+      "Cost-effective scaling",
+      "Educational impact"
+    ],
+    "limitations": [
+      "Requires coordination",
+      "Seasonal availability",
+      "Training overhead"
+    ]
+  },
+  "Clera Filtration Unit": {
+    "name": "Clera Special Membrane Filtration Unit",
+    "category": "Collection",
+    "trl": "7",
+    "targetEnvironment": "Wastewater Treatment",
+    "description": "Advanced membrane filtration system specifically designed for microplastic removal from water streams.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "7",
+        "description": "System prototype demonstrated"
+      },
+      "Target Environment": {
+        "value": "Treatment Plants",
+        "description": "Municipal and industrial facilities"
+      },
+      "Membrane Type": {
+        "value": "Ceramic",
+        "description": "0.1 μm pore size"
+      },
+      "Flow Rate": {
+        "value": "50-200",
+        "description": "m³/hour capacity"
+      }
+    },
+    "performance": {
+      "Removal Efficiency": {
+        "value": "98.5%",
+        "unit": "microplastic capture"
+      },
+      "Operating Cost": {
+        "value": "€0.12",
+        "unit": "per m³ treated"
+      },
+      "Energy Consumption": {
+        "value": "0.8",
+        "unit": "kWh/m³"
+      },
+      "Maintenance Interval": {
+        "value": "6",
+        "unit": "months"
+      }
+    },
+    "applications": [
+      "Wastewater treatment",
+      "Industrial filtration",
+      "Water recycling"
+    ],
+    "advantages": [
+      "High efficiency",
+      "Automated operation",
+      "Low maintenance"
+    ],
+    "limitations": [
+      "High initial cost",
+      "Energy intensive",
+      "Membrane replacement"
+    ]
+  },
+  "Ferrybox Sampling": {
+    "name": "Ferrybox Sampling Device",
+    "category": "Detection",
+    "trl": "8",
+    "targetEnvironment": "Marine Transit Routes",
+    "description": "Automated water sampling system installed on ferries for continuous monitoring during regular transit.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "8",
+        "description": "Proven in operational environment"
+      },
+      "Target Environment": {
+        "value": "Ferry Routes",
+        "description": "Regular shipping lanes"
+      },
+      "Sampling Frequency": {
+        "value": "Every 5km",
+        "description": "Automated collection"
+      },
+      "Storage Capacity": {
+        "value": "48",
+        "description": "samples per voyage"
+      }
+    },
+    "performance": {
+      "Coverage Area": {
+        "value": "1,200",
+        "unit": "km per voyage"
+      },
+      "Operating Cost": {
+        "value": "€25",
+        "unit": "per voyage"
+      },
+      "Data Consistency": {
+        "value": "96%",
+        "unit": "success rate"
+      },
+      "Sample Quality": {
+        "value": "93%",
+        "unit": "analysis ready"
+      }
+    },
+    "applications": [
+      "Route-based monitoring",
+      "Pollution tracking",
+      "Temporal studies"
+    ],
+    "advantages": [
+      "Continuous monitoring",
+      "Large spatial coverage",
+      "Cost-effective"
+    ],
+    "limitations": [
+      "Limited to ferry routes",
+      "Weather dependent",
+      "Sample storage limits"
+    ]
+  },
+  "Drone Observations": {
+    "name": "Drone Observations",
+    "category": "Detection",
+    "trl": "8",
+    "targetEnvironment": "Aerial Surveillance",
+    "description": "UAV-based visual and sensor monitoring system for large-area litter detection and mapping.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "8",
+        "description": "Proven in operational environment"
+      },
+      "Target Environment": {
+        "value": "Aerial Coverage",
+        "description": "Coastal and marine areas"
+      },
+      "Flight Duration": {
+        "value": "45",
+        "description": "minutes per mission"
+      },
+      "Detection Resolution": {
+        "value": "2cm",
+        "description": "minimum object size"
+      }
+    },
+    "performance": {
+      "Coverage Rate": {
+        "value": "15",
+        "unit": "km²/hour"
+      },
+      "Operating Cost": {
+        "value": "€85",
+        "unit": "per flight hour"
+      },
+      "Detection Accuracy": {
+        "value": "89%",
+        "unit": "vs. ground truth"
+      },
+      "Weather Tolerance": {
+        "value": "15",
+        "unit": "m/s max wind"
+      }
+    },
+    "applications": [
+      "Area surveillance",
+      "Debris mapping",
+      "Access monitoring"
+    ],
+    "advantages": [
+      "Large area coverage",
+      "High resolution data",
+      "Rapid deployment"
+    ],
+    "limitations": [
+      "Weather dependent",
+      "Battery constraints",
+      "Regulatory restrictions"
+    ],
+    "sampleData": [
+      {
+        "timestamp": "2024-09-25T11:30:00Z",
+        "flight_id": "DRONE_MISSION_0156",
+        "area_surveyed": "3.2 km²",
+        "flight_duration": "42 minutes",
+        "objects_detected": 156,
+        "hotspots": "Estuary mouth (67 items), Marina area (41 items)",
+        "weather_conditions": "Clear, wind 8 m/s"
+      },
+      {
+        "timestamp": "2024-09-25T14:15:00Z",
+        "flight_id": "DRONE_MISSION_0157",
+        "area_surveyed": "2.8 km²",
+        "flight_duration": "38 minutes",
+        "objects_detected": 89,
+        "hotspots": "Beach access point (34 items), Pier vicinity (28 items)",
+        "weather_conditions": "Partly cloudy, wind 12 m/s"
+      }
+    ]
+  },
+  "Mounted Camera": {
+    "name": "Mounted Camera",
+    "category": "Detection",
+    "trl": "9",
+    "targetEnvironment": "Fixed Monitoring Points",
+    "description": "AI-enabled fixed camera systems for continuous monitoring and automated litter detection.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "9",
+        "description": "Fully operational systems"
+      },
+      "Target Environment": {
+        "value": "Fixed Points",
+        "description": "Bridges, piers, coastal stations"
+      },
+      "AI Processing": {
+        "value": "Real-time",
+        "description": "On-board analysis"
+      },
+      "Image Resolution": {
+        "value": "4K",
+        "description": "Ultra-high definition"
+      }
+    },
+    "performance": {
+      "Detection Accuracy": {
+        "value": "91%",
+        "unit": "object classification"
+      },
+      "Operating Cost": {
+        "value": "€2.5",
+        "unit": "per day"
+      },
+      "Uptime": {
+        "value": "99.2%",
+        "unit": "availability"
+      },
+      "Response Time": {
+        "value": "30",
+        "unit": "seconds alert"
+      }
+    },
+    "applications": [
+      "Continuous monitoring",
+      "Alert systems",
+      "Trend analysis"
+    ],
+    "advantages": [
+      "24/7 operation",
+      "Immediate alerts",
+      "Long-term reliability"
+    ],
+    "limitations": [
+      "Fixed location",
+      "Lighting dependent",
+      "Initial setup cost"
+    ],
+    "sampleData": [
+      {
+        "timestamp": "2024-09-25T12:08:00Z",
+        "camera_id": "CAM_PIER_001",
+        "detection_event": "Large debris cluster",
+        "object_count": 12,
+        "classification": "Plastic bottles (8), Bags (3), Unknown (1)",
+        "confidence_score": "94.2%",
+        "alert_level": "Medium"
+      },
+      {
+        "timestamp": "2024-09-25T12:08:30Z",
+        "camera_id": "CAM_PIER_001",
+        "detection_event": "Individual item",
+        "object_count": 1,
+        "classification": "Plastic container",
+        "confidence_score": "87.6%",
+        "alert_level": "Low"
+      }
+    ]
+  },
+  "JRC Floating Litter App": {
+    "name": "JRC Floating Litter Monitoring App",
+    "category": "Detection",
+    "trl": "8",
+    "targetEnvironment": "Marine Vessels",
+    "description": "Specialized mobile application for systematic reporting of floating marine litter from ships and boats.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "8",
+        "description": "Operational across EU waters"
+      },
+      "Target Environment": {
+        "value": "Marine Vessels",
+        "description": "Ships, boats, research vessels"
+      },
+      "Reporting Protocol": {
+        "value": "Standardized",
+        "description": "JRC methodology"
+      },
+      "Offline Capability": {
+        "value": "Full",
+        "description": "Works without connectivity"
+      }
+    },
+    "performance": {
+      "Report Completion": {
+        "value": "92%",
+        "unit": "success rate"
+      },
+      "Operating Cost": {
+        "value": "€0",
+        "unit": "per report"
+      },
+      "Data Synchronization": {
+        "value": "98%",
+        "unit": "upload success"
+      },
+      "User Satisfaction": {
+        "value": "4.2",
+        "unit": "out of 5 stars"
+      }
+    },
+    "applications": [
+      "Vessel-based monitoring",
+      "Shipping lane surveys",
+      "Fisheries reporting"
+    ],
+    "advantages": [
+      "Maritime focus",
+      "Offline operation",
+      "Professional user base"
+    ],
+    "limitations": [
+      "Requires vessel access",
+      "User training needed",
+      "Limited shore coverage"
+    ]
+  },
+  "Sensor Black Box": {
+    "name": "Sensor Black Box",
+    "category": "Detection",
+    "trl": "6",
+    "targetEnvironment": "Autonomous Deployment",
+    "description": "Autonomous sensor package with multiple detection methods for remote litter monitoring.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "6",
+        "description": "Technology demonstrated"
+      },
+      "Target Environment": {
+        "value": "Remote Areas",
+        "description": "Autonomous deployment"
+      },
+      "Sensor Array": {
+        "value": "Multi-modal",
+        "description": "Optical, acoustic, chemical"
+      },
+      "Battery Life": {
+        "value": "6",
+        "description": "months autonomous"
+      }
+    },
+    "performance": {
+      "Detection Range": {
+        "value": "50",
+        "unit": "meter radius"
+      },
+      "Operating Cost": {
+        "value": "€180",
+        "unit": "per deployment"
+      },
+      "Data Accuracy": {
+        "value": "86%",
+        "unit": "classification rate"
+      },
+      "Environmental Rating": {
+        "value": "IP68",
+        "unit": "waterproof rating"
+      }
+    },
+    "applications": [
+      "Remote monitoring",
+      "Long-term studies",
+      "Inaccessible areas"
+    ],
+    "advantages": [
+      "Autonomous operation",
+      "Multi-sensor approach",
+      "Remote deployment"
+    ],
+    "limitations": [
+      "Early stage technology",
+      "High unit cost",
+      "Data retrieval challenges"
+    ],
+    "sampleData": [
+      {
+        "timestamp": "2024-09-25T09:00:00Z",
+        "sensor_id": "SBB_UNIT_003",
+        "battery_level": "78%",
+        "detection_count": 23,
+        "optical_alerts": 18,
+        "acoustic_signatures": 5,
+        "water_temperature": "12.3°C",
+        "deployment_days": 45
+      }
+    ]
+  },
+  "Infordata Water Sensor": {
+    "name": "Infordata Water Sensor Kit",
+    "category": "Detection",
+    "trl": "8",
+    "targetEnvironment": "Water Quality Monitoring",
+    "description": "Comprehensive water quality sensor package for real-time environmental monitoring.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "8",
+        "description": "Proven in operational environment"
+      },
+      "Target Environment": {
+        "value": "Aquatic Systems",
+        "description": "Rivers, lakes, coastal waters"
+      },
+      "Sensor Types": {
+        "value": "Multi-parameter",
+        "description": "pH, turbidity, conductivity, temperature"
+      },
+      "Data Transmission": {
+        "value": "Real-time",
+        "description": "Wireless telemetry"
+      }
+    },
+    "performance": {
+      "Measurement Accuracy": {
+        "value": "±2%",
+        "unit": "calibrated range"
+      },
+      "Operating Cost": {
+        "value": "€120",
+        "unit": "per month"
+      },
+      "Data Frequency": {
+        "value": "15",
+        "unit": "minute intervals"
+      },
+      "Maintenance Interval": {
+        "value": "3",
+        "unit": "months"
+      }
+    },
+    "applications": [
+      "Water quality monitoring",
+      "Environmental compliance",
+      "Research studies"
+    ],
+    "advantages": [
+      "Real-time data",
+      "Multiple parameters",
+      "Reliable transmission"
+    ],
+    "limitations": [
+      "Calibration needs",
+      "Fouling susceptible",
+      "Power requirements"
+    ],
+    "sampleData": [
+      {
+        "timestamp": "2024-09-25T13:45:00Z",
+        "sensor_location": "Danube monitoring station",
+        "pH": 8.1,
+        "turbidity": "12.3 NTU",
+        "conductivity": "485 μS/cm",
+        "temperature": "15.2°C",
+        "dissolved_oxygen": "8.7 mg/L"
+      }
+    ]
+  },
+  "Archimedean Drum Screw": {
+    "name": "Archimedean Drum Screw",
+    "category": "Collection",
+    "trl": "7",
+    "targetEnvironment": "Water Intake Systems",
+    "description": "Mechanical collection system using Archimedean screw principle for continuous litter removal.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "7",
+        "description": "System prototype demonstrated"
+      },
+      "Target Environment": {
+        "value": "Water Intakes",
+        "description": "Pumping stations, treatment plants"
+      },
+      "Collection Method": {
+        "value": "Continuous",
+        "description": "24/7 operation capability"
+      },
+      "Material Compatibility": {
+        "value": "All debris",
+        "description": "Size range 2cm-50cm"
+      }
+    },
+    "performance": {
+      "Collection Rate": {
+        "value": "95%",
+        "unit": "debris capture"
+      },
+      "Operating Cost": {
+        "value": "€45",
+        "unit": "per day"
+      },
+      "Processing Capacity": {
+        "value": "500",
+        "unit": "L/min"
+      },
+      "Maintenance": {
+        "value": "Weekly",
+        "unit": "inspection cycle"
+      }
+    },
+    "applications": [
+      "Water treatment plants",
+      "Intake protection",
+      "River cleaning"
+    ],
+    "advantages": [
+      "Continuous operation",
+      "High efficiency",
+      "Low maintenance"
+    ],
+    "limitations": [
+      "Fixed installation",
+      "Size constraints",
+      "Power requirements"
+    ]
+  },
+  "Fish Friendly Trawling Net": {
+    "name": "Fish Friendly Litter Removing Trawling Net",
+    "category": "Collection",
+    "trl": "8",
+    "targetEnvironment": "Marine Fishing Operations",
+    "description": "Specialized trawling net designed to collect litter while minimizing marine life capture.",
+    "characteristics": {
+      "Technology Readiness Level": {
+        "value": "8",
+        "description": "Proven in operational environment"
+      },
+      "Target Environment": {
+        "value": "Marine Fishing",
+        "description": "Commercial fishing operations"
+      },
+      "Selectivity": {
+        "value": "High",
+        "description": "Marine life escape mechanisms"
+      },
+      "Compatibility": {
+        "value": "Standard gear",
+        "description": "Retrofits existing equipment"
+      }
+    },
+    "performance": {
+      "Litter Collection": {
+        "value": "78%",
+        "unit": "debris capture"
+      },
+      "Operating Cost": {
+        "value": "€200",
+        "unit": "per deployment"
+      },
+      "Fish Mortality": {
+        "value": "<5%",
+        "unit": "vs. standard nets"
+      },
+      "Durability": {
+        "value": "200",
+        "unit": "deployment cycles"
+      }
+    },
+    "applications": [
+      "Commercial fishing",
+      "Research vessels",
+      "Cleanup operations"
+    ],
+    "advantages": [
+      "Dual purpose operation",
+      "Marine life protection",
+      "Industry integration"
+    ],
+    "limitations": [
+      "Fishing vessel required",
+      "Weather dependent",
+      "Crew training needed"
+    ]
+  }
+}

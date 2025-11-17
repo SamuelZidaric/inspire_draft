@@ -1,533 +1,138 @@
+// Global state variables
 let currentCampaignType = '';
 let currentCampaignId = '';
 let sensorUpdateInterval = null;
 let currentDemoSite = '';
-let solutionSourceView = ''; // Track where solution detail was accessed from
+let solutionSourceView = '';
 
-const demoSitesData = {
-    'domzale': {
-        name: "Domžale-Kamnik Wastewater Treatment Plant (WWTP)",
-        location: "Slovenia",
-        type: "Wastewater Treatment Facility",
-        coordinates: "46.1373° N, 14.5961° E",
-        capacity: "45,000 population equivalent",
-        commissioning: "2019",
-        description: "Advanced wastewater treatment plant serving the municipalities of Domžale and Kamnik, equipped with state-of-the-art sensors for real-time water quality monitoring.",
-        technologies: ["Biological treatment", "Nutrient removal", "Advanced oxidation"],
-        sensors: {
-            ph: { name: "pH Level", unit: "pH", min: 6.8, max: 8.2, optimal: [7.0, 7.5], current: 7.2 },
-            orp: { name: "Oxidation-Reduction Potential", unit: "mV", min: 150, max: 350, optimal: [200, 300], current: 245 },
-            turbidity: { name: "Turbidity", unit: "NTU", min: 0.5, max: 15, optimal: [1, 5], current: 3.2 },
-            cod: { name: "Chemical Oxygen Demand", unit: "mg/L", min: 10, max: 80, optimal: [15, 30], current: 22 },
-            conductivity: { name: "Conductivity", unit: "μS/cm", min: 400, max: 1200, optimal: [500, 800], current: 650 }
+// Data containers - will be populated from JSON files
+let demoSitesData = {};
+let solutionsData = {};
+let campaignData = {};
+let campaignMicroSampleData = [];
+let labAnalysisData = [];
+let qualityControlData = [];
+
+// Loading state
+let dataLoaded = false;
+let dataLoadError = null;
+
+// Data loader function
+async function loadData() {
+    try {
+        showLoadingState();
+        
+        // Load all data files in parallel
+        const [demoSites, solutions, campaigns, microSamples, labAnalysis, qualityControl] = await Promise.all([
+            fetch('data/demo_sites.json').then(r => r.json()),
+            fetch('data/solutions.json').then(r => r.json()),
+            fetch('data/campaigns.json').then(r => r.json()),
+            fetch('data/campaign_micro_samples.json').then(r => r.json()),
+            fetch('data/lab_analysis.json').then(r => r.json()),
+            fetch('data/quality_control.json').then(r => r.json())
+        ]);
+
+        // Assign to global variables
+        demoSitesData = demoSites;
+        solutionsData = solutions;
+        campaignData = campaigns;
+        campaignMicroSampleData = microSamples;
+        labAnalysisData = labAnalysis;
+        qualityControlData = qualityControl;
+
+        dataLoaded = true;
+        hideLoadingState();
+        
+        // Initialize the sampling data view if it exists
+        if (document.getElementById('sampling-samples-container')) {
+            renderSamplingData();
         }
-    },
-    'po-gnocca': {
-        name: "River Po' - Po di Gnocca",
-        location: "Italy",
-        type: "River Monitoring Station",
-        coordinates: "45.0348° N, 12.1734° E",
-        capacity: "Major tributary monitoring",
-        commissioning: "2020",
-        description: "Strategic monitoring point on the Po di Gnocca branch of the River Po system, tracking water quality parameters to assess environmental impact and litter transport.",
-        technologies: ["Flow measurement", "Water quality sensors", "Automated sampling"],
-        sensors: {
-            ph: { name: "pH Level", unit: "pH", min: 7.5, max: 8.8, optimal: [7.8, 8.2], current: 8.0 },
-            orp: { name: "Oxidation-Reduction Potential", unit: "mV", min: 100, max: 280, optimal: [150, 220], current: 185 },
-            turbidity: { name: "Turbidity", unit: "NTU", min: 2, max: 35, optimal: [5, 15], current: 8.7 },
-            cod: { name: "Chemical Oxygen Demand", unit: "mg/L", min: 8, max: 45, optimal: [10, 20], current: 14 },
-            conductivity: { name: "Conductivity", unit: "μS/cm", min: 200, max: 600, optimal: [250, 400], current: 320 }
-        }
-    },
-    'douro': {
-        name: "The Douro River",
-        location: "Portugal",
-        type: "Major River Monitoring",
-        coordinates: "41.1579° N, 8.6291° W",
-        capacity: "International watershed monitoring",
-        commissioning: "2021",
-        description: "Critical monitoring station on the Douro River, one of the major rivers of the Iberian Peninsula, tracking transboundary water quality and pollution transport.",
-        technologies: ["Multi-parameter probes", "Telemetry systems", "Weather station integration"],
-        sensors: {
-            ph: { name: "pH Level", unit: "pH", min: 7.2, max: 8.5, optimal: [7.5, 8.0], current: 7.8 },
-            orp: { name: "Oxidation-Reduction Potential", unit: "mV", min: 120, max: 300, optimal: [160, 240], current: 198 },
-            turbidity: { name: "Turbidity", unit: "NTU", min: 1, max: 25, optimal: [2, 8], current: 5.1 },
-            cod: { name: "Chemical Oxygen Demand", unit: "mg/L", min: 5, max: 30, optimal: [8, 15], current: 11 },
-            conductivity: { name: "Conductivity", unit: "μS/cm", min: 150, max: 450, optimal: [180, 300], current: 235 }
-        }
-    },
-    'danube': {
-        name: "The Danube River",
-        location: "Multi-national",
-        type: "International River Monitoring",
-        coordinates: "48.2082° N, 16.3738° E",
-        capacity: "Continental watershed monitoring",
-        commissioning: "2020",
-        description: "Strategic monitoring point on the Danube River near Vienna, part of the international monitoring network for Europe's second-longest river system.",
-        technologies: ["Automated monitoring stations", "Satellite telemetry", "Cross-border data sharing"],
-        sensors: {
-            ph: { name: "pH Level", unit: "pH", min: 7.8, max: 8.6, optimal: [8.0, 8.3], current: 8.1 },
-            orp: { name: "Oxidation-Reduction Potential", unit: "mV", min: 180, max: 320, optimal: [200, 280], current: 235 },
-            turbidity: { name: "Turbidity", unit: "NTU", min: 3, max: 40, optimal: [5, 20], current: 12.3 },
-            cod: { name: "Chemical Oxygen Demand", unit: "mg/L", min: 12, max: 50, optimal: [15, 25], current: 18 },
-            conductivity: { name: "Conductivity", unit: "μS/cm", min: 300, max: 800, optimal: [400, 600], current: 485 }
-        }
+        
+        console.log('✓ All data loaded successfully');
+        return true;
+    } catch (error) {
+        console.error('Error loading data:', error);
+        dataLoadError = error;
+        showErrorState(error);
+        return false;
     }
-};
+}
 
-const solutionsData = {
-    "Manta Net": {
-        name: "Manta Net",
-        category: "Detection",
-        trl: "9",
-        targetEnvironment: "Marine Surface Waters",
-        description: "High-efficiency surface trawling net designed for microplastic sampling with minimal marine life disturbance.",
-        characteristics: {
-            "Technology Readiness Level": { value: "9", description: "Fully deployed and operational" },
-            "Target Environment": { value: "Marine Surface", description: "0-50cm depth sampling" },
-            "Mesh Size": { value: "333 μm", description: "Optimal for microplastic capture" },
-            "Deployment Method": { value: "Ship-towed", description: "Requires research vessel" }
-        },
-        performance: {
-            "Collection Efficiency": { value: "95%", unit: "capture rate" },
-            "Operating Cost": { value: "€150", unit: "per deployment" },
-            "Processing Speed": { value: "2.5", unit: "km/hour" },
-            "Sample Volume": { value: "0.5-2.0", unit: "m³/min" }
-        },
-        applications: ["Microplastic monitoring", "Water quality assessment", "Marine debris surveys"],
-        advantages: ["High capture efficiency", "Standardized protocol", "Minimal ecosystem impact"],
-        limitations: ["Weather dependent", "Requires specialized vessel", "Limited depth range"],
-        sampleData: [
-            {
-                timestamp: "2024-09-25T14:30:00Z",
-                location: "Baltic Sea - 59.8586°N, 23.6455°E",
-                microplastic_count: 847,
-                dominant_material: "PE/PP (67%)",
-                size_distribution: "0.3-5.0mm",
-                density: "2.3 particles/m³",
-                sample_volume: "1.2 m³"
-            },
-            {
-                timestamp: "2024-09-25T16:45:00Z",
-                location: "Baltic Sea - 59.8621°N, 23.6489°E",
-                microplastic_count: 923,
-                dominant_material: "PET (41%)",
-                size_distribution: "0.5-3.2mm",
-                density: "2.8 particles/m³",
-                sample_volume: "1.1 m³"
-            }
-        ]
-    },
-    "Marine LitterWatch App": {
-        name: "Marine LitterWatch App",
-        category: "Detection",
-        trl: "9",
-        targetEnvironment: "Coastal Areas & Beaches",
-        description: "Citizen science mobile application for standardized marine litter reporting and data collection.",
-        characteristics: {
-            "Technology Readiness Level": { value: "9", description: "Widely deployed across Europe" },
-            "Target Environment": { value: "Coastal/Beach", description: "Shoreline and near-shore areas" },
-            "Data Standards": { value: "OSPAR Protocol", description: "Standardized reporting format" },
-            "User Base": { value: "Global", description: "Available in 24 languages" }
-        },
-        performance: {
-            "User Engagement": { value: "85%", unit: "completion rate" },
-            "Operating Cost": { value: "€0", unit: "per report" },
-            "Data Quality": { value: "92%", unit: "accuracy score" },
-            "Response Time": { value: "24", unit: "hours average" }
-        },
-        applications: ["Citizen science monitoring", "Beach litter surveys", "Policy impact assessment"],
-        advantages: ["Zero operational cost", "Large-scale data collection", "Real-time reporting"],
-        limitations: ["User training required", "Data quality variability", "Geographic coverage gaps"],
-        sampleData: [
-            {
-                timestamp: "2024-09-25T10:15:00Z",
-                location: "Barceloneta Beach, Spain",
-                user_id: "volunteer_0847",
-                litter_types: "Plastic bottles (15), Cigarette butts (47), Food wrappers (12)",
-                survey_area: "100m transect",
-                total_items: 74,
-                photo_quality: "Excellent"
-            },
-            {
-                timestamp: "2024-09-25T15:22:00Z",
-                location: "Brighton Beach, UK",
-                user_id: "volunteer_0923",
-                litter_types: "Plastic bags (8), Bottle caps (23), Fishing gear (3)",
-                survey_area: "100m transect",
-                total_items: 34,
-                photo_quality: "Good"
-            }
-        ]
-    },
-    "Citizen Engagement": {
-        name: "Citizen Engagement",
-        category: "Detection",
-        trl: "8",
-        targetEnvironment: "All Environments",
-        description: "Comprehensive citizen science framework involving training, tools, and community coordination.",
-        characteristics: {
-            "Technology Readiness Level": { value: "8", description: "Proven in operational environment" },
-            "Target Environment": { value: "Multi-environment", description: "Coastal, riverine, urban areas" },
-            "Training Protocol": { value: "Standardized", description: "2-day certification program" },
-            "Community Size": { value: "Variable", description: "10-500 participants per campaign" }
-        },
-        performance: {
-            "Participation Rate": { value: "78%", unit: "retention rate" },
-            "Training Cost": { value: "€45", unit: "per participant" },
-            "Data Contribution": { value: "35%", unit: "of total dataset" },
-            "Quality Score": { value: "88%", unit: "vs. expert data" }
-        },
-        applications: ["Community monitoring", "Education and awareness", "Long-term surveillance"],
-        advantages: ["High community buy-in", "Cost-effective scaling", "Educational impact"],
-        limitations: ["Requires coordination", "Seasonal availability", "Training overhead"]
-    },
-    "Clera Filtration Unit": {
-        name: "Clera Special Membrane Filtration Unit",
-        category: "Collection",
-        trl: "7",
-        targetEnvironment: "Wastewater Treatment",
-        description: "Advanced membrane filtration system specifically designed for microplastic removal from water streams.",
-        characteristics: {
-            "Technology Readiness Level": { value: "7", description: "System prototype demonstrated" },
-            "Target Environment": { value: "Treatment Plants", description: "Municipal and industrial facilities" },
-            "Membrane Type": { value: "Ceramic", description: "0.1 μm pore size" },
-            "Flow Rate": { value: "50-200", description: "m³/hour capacity" }
-        },
-        performance: {
-            "Removal Efficiency": { value: "98.5%", unit: "microplastic capture" },
-            "Operating Cost": { value: "€0.12", unit: "per m³ treated" },
-            "Energy Consumption": { value: "0.8", unit: "kWh/m³" },
-            "Maintenance Interval": { value: "6", unit: "months" }
-        },
-        applications: ["Wastewater treatment", "Industrial filtration", "Water recycling"],
-        advantages: ["High efficiency", "Automated operation", "Low maintenance"],
-        limitations: ["High initial cost", "Energy intensive", "Membrane replacement"]
-    },
-    "Ferrybox Sampling": {
-        name: "Ferrybox Sampling Device",
-        category: "Detection",
-        trl: "8",
-        targetEnvironment: "Marine Transit Routes",
-        description: "Automated water sampling system installed on ferries for continuous monitoring during regular transit.",
-        characteristics: {
-            "Technology Readiness Level": { value: "8", description: "Proven in operational environment" },
-            "Target Environment": { value: "Ferry Routes", description: "Regular shipping lanes" },
-            "Sampling Frequency": { value: "Every 5km", description: "Automated collection" },
-            "Storage Capacity": { value: "48", description: "samples per voyage" }
-        },
-        performance: {
-            "Coverage Area": { value: "1,200", unit: "km per voyage" },
-            "Operating Cost": { value: "€25", unit: "per voyage" },
-            "Data Consistency": { value: "96%", unit: "success rate" },
-            "Sample Quality": { value: "93%", unit: "analysis ready" }
-        },
-        applications: ["Route-based monitoring", "Pollution tracking", "Temporal studies"],
-        advantages: ["Continuous monitoring", "Large spatial coverage", "Cost-effective"],
-        limitations: ["Limited to ferry routes", "Weather dependent", "Sample storage limits"]
-    },
-    "Drone Observations": {
-        name: "Drone Observations",
-        category: "Detection",
-        trl: "8",
-        targetEnvironment: "Aerial Surveillance",
-        description: "UAV-based visual and sensor monitoring system for large-area litter detection and mapping.",
-        characteristics: {
-            "Technology Readiness Level": { value: "8", description: "Proven in operational environment" },
-            "Target Environment": { value: "Aerial Coverage", description: "Coastal and marine areas" },
-            "Flight Duration": { value: "45", description: "minutes per mission" },
-            "Detection Resolution": { value: "2cm", description: "minimum object size" }
-        },
-        performance: {
-            "Coverage Rate": { value: "15", unit: "km²/hour" },
-            "Operating Cost": { value: "€85", unit: "per flight hour" },
-            "Detection Accuracy": { value: "89%", unit: "vs. ground truth" },
-            "Weather Tolerance": { value: "15", unit: "m/s max wind" }
-        },
-        applications: ["Area surveillance", "Debris mapping", "Access monitoring"],
-        advantages: ["Large area coverage", "High resolution data", "Rapid deployment"],
-        limitations: ["Weather dependent", "Battery constraints", "Regulatory restrictions"],
-        sampleData: [
-            {
-                timestamp: "2024-09-25T11:30:00Z",
-                flight_id: "DRONE_MISSION_0156",
-                area_surveyed: "3.2 km²",
-                flight_duration: "42 minutes",
-                objects_detected: 156,
-                hotspots: "Estuary mouth (67 items), Marina area (41 items)",
-                weather_conditions: "Clear, wind 8 m/s"
-            },
-            {
-                timestamp: "2024-09-25T14:15:00Z",
-                flight_id: "DRONE_MISSION_0157",
-                area_surveyed: "2.8 km²",
-                flight_duration: "38 minutes",
-                objects_detected: 89,
-                hotspots: "Beach access point (34 items), Pier vicinity (28 items)",
-                weather_conditions: "Partly cloudy, wind 12 m/s"
-            }
-        ]
-    },
-    "Mounted Camera": {
-        name: "Mounted Camera",
-        category: "Detection",
-        trl: "9",
-        targetEnvironment: "Fixed Monitoring Points",
-        description: "AI-enabled fixed camera systems for continuous monitoring and automated litter detection.",
-        characteristics: {
-            "Technology Readiness Level": { value: "9", description: "Fully operational systems" },
-            "Target Environment": { value: "Fixed Points", description: "Bridges, piers, coastal stations" },
-            "AI Processing": { value: "Real-time", description: "On-board analysis" },
-            "Image Resolution": { value: "4K", description: "Ultra-high definition" }
-        },
-        performance: {
-            "Detection Accuracy": { value: "91%", unit: "object classification" },
-            "Operating Cost": { value: "€2.5", unit: "per day" },
-            "Uptime": { value: "99.2%", unit: "availability" },
-            "Response Time": { value: "30", unit: "seconds alert" }
-        },
-        applications: ["Continuous monitoring", "Alert systems", "Trend analysis"],
-        advantages: ["24/7 operation", "Immediate alerts", "Long-term reliability"],
-        limitations: ["Fixed location", "Lighting dependent", "Initial setup cost"],
-        sampleData: [
-            {
-                timestamp: "2024-09-25T12:08:00Z",
-                camera_id: "CAM_PIER_001",
-                detection_event: "Large debris cluster",
-                object_count: 12,
-                classification: "Plastic bottles (8), Bags (3), Unknown (1)",
-                confidence_score: "94.2%",
-                alert_level: "Medium"
-            },
-            {
-                timestamp: "2024-09-25T12:08:30Z",
-                camera_id: "CAM_PIER_001",
-                detection_event: "Individual item",
-                object_count: 1,
-                classification: "Plastic container",
-                confidence_score: "87.6%",
-                alert_level: "Low"
-            }
-        ]
-    },
-    "JRC Floating Litter App": {
-        name: "JRC Floating Litter Monitoring App",
-        category: "Detection",
-        trl: "8",
-        targetEnvironment: "Marine Vessels",
-        description: "Specialized mobile application for systematic reporting of floating marine litter from ships and boats.",
-        characteristics: {
-            "Technology Readiness Level": { value: "8", description: "Operational across EU waters" },
-            "Target Environment": { value: "Marine Vessels", description: "Ships, boats, research vessels" },
-            "Reporting Protocol": { value: "Standardized", description: "JRC methodology" },
-            "Offline Capability": { value: "Full", description: "Works without connectivity" }
-        },
-        performance: {
-            "Report Completion": { value: "92%", unit: "success rate" },
-            "Operating Cost": { value: "€0", unit: "per report" },
-            "Data Synchronization": { value: "98%", unit: "upload success" },
-            "User Satisfaction": { value: "4.2", unit: "out of 5 stars" }
-        },
-        applications: ["Vessel-based monitoring", "Shipping lane surveys", "Fisheries reporting"],
-        advantages: ["Maritime focus", "Offline operation", "Professional user base"],
-        limitations: ["Requires vessel access", "User training needed", "Limited shore coverage"]
-    },
-    "Sensor Black Box": {
-        name: "Sensor Black Box",
-        category: "Detection",
-        trl: "6",
-        targetEnvironment: "Autonomous Deployment",
-        description: "Autonomous sensor package with multiple detection methods for remote litter monitoring.",
-        characteristics: {
-            "Technology Readiness Level": { value: "6", description: "Technology demonstrated" },
-            "Target Environment": { value: "Remote Areas", description: "Autonomous deployment" },
-            "Sensor Array": { value: "Multi-modal", description: "Optical, acoustic, chemical" },
-            "Battery Life": { value: "6", description: "months autonomous" }
-        },
-        performance: {
-            "Detection Range": { value: "50", unit: "meter radius" },
-            "Operating Cost": { value: "€180", unit: "per deployment" },
-            "Data Accuracy": { value: "86%", unit: "classification rate" },
-            "Environmental Rating": { value: "IP68", unit: "waterproof rating" }
-        },
-        applications: ["Remote monitoring", "Long-term studies", "Inaccessible areas"],
-        advantages: ["Autonomous operation", "Multi-sensor approach", "Remote deployment"],
-        limitations: ["Early stage technology", "High unit cost", "Data retrieval challenges"],
-        sampleData: [
-            {
-                timestamp: "2024-09-25T09:00:00Z",
-                sensor_id: "SBB_UNIT_003",
-                battery_level: "78%",
-                detection_count: 23,
-                optical_alerts: 18,
-                acoustic_signatures: 5,
-                water_temperature: "12.3°C",
-                deployment_days: 45
-            }
-        ]
-    },
-    "Infordata Water Sensor": {
-        name: "Infordata Water Sensor Kit",
-        category: "Detection",
-        trl: "8",
-        targetEnvironment: "Water Quality Monitoring",
-        description: "Comprehensive water quality sensor package for real-time environmental monitoring.",
-        characteristics: {
-            "Technology Readiness Level": { value: "8", description: "Proven in operational environment" },
-            "Target Environment": { value: "Aquatic Systems", description: "Rivers, lakes, coastal waters" },
-            "Sensor Types": { value: "Multi-parameter", description: "pH, turbidity, conductivity, temperature" },
-            "Data Transmission": { value: "Real-time", description: "Wireless telemetry" }
-        },
-        performance: {
-            "Measurement Accuracy": { value: "±2%", unit: "calibrated range" },
-            "Operating Cost": { value: "€120", unit: "per month" },
-            "Data Frequency": { value: "15", unit: "minute intervals" },
-            "Maintenance Interval": { value: "3", unit: "months" }
-        },
-        applications: ["Water quality monitoring", "Environmental compliance", "Research studies"],
-        advantages: ["Real-time data", "Multiple parameters", "Reliable transmission"],
-        limitations: ["Calibration needs", "Fouling susceptible", "Power requirements"],
-        sampleData: [
-            {
-                timestamp: "2024-09-25T13:45:00Z",
-                sensor_location: "Danube monitoring station",
-                pH: 8.1,
-                turbidity: "12.3 NTU",
-                conductivity: "485 μS/cm",
-                temperature: "15.2°C",
-                dissolved_oxygen: "8.7 mg/L"
-            }
-        ]
+// Loading state UI functions
+function showLoadingState() {
+    const loadingHTML = `
+        <div id="data-loading" style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        ">
+            <div style="text-align: center;">
+                <div class="loading" style="margin: 0 auto 20px;"></div>
+                <h3 style="color: #333; margin-bottom: 10px;">Loading Data...</h3>
+                <p style="color: #666;">Please wait while we fetch the monitoring data</p>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', loadingHTML);
+}
+
+function hideLoadingState() {
+    const loader = document.getElementById('data-loading');
+    if (loader) {
+        loader.remove();
     }
-};
+}
 
-// Add missing solution entries for completeness
-const additionalSolutions = {
-    "Archimedean Drum Screw": {
-        name: "Archimedean Drum Screw",
-        category: "Collection",
-        trl: "7",
-        targetEnvironment: "Water Intake Systems",
-        description: "Mechanical collection system using Archimedean screw principle for continuous litter removal.",
-        characteristics: {
-            "Technology Readiness Level": { value: "7", description: "System prototype demonstrated" },
-            "Target Environment": { value: "Water Intakes", description: "Pumping stations, treatment plants" },
-            "Collection Method": { value: "Continuous", description: "24/7 operation capability" },
-            "Material Compatibility": { value: "All debris", description: "Size range 2cm-50cm" }
-        },
-        performance: {
-            "Collection Rate": { value: "95%", unit: "debris capture" },
-            "Operating Cost": { value: "€45", unit: "per day" },
-            "Processing Capacity": { value: "500", unit: "L/min" },
-            "Maintenance": { value: "Weekly", unit: "inspection cycle" }
-        },
-        applications: ["Water treatment plants", "Intake protection", "River cleaning"],
-        advantages: ["Continuous operation", "High efficiency", "Low maintenance"],
-        limitations: ["Fixed installation", "Size constraints", "Power requirements"]
-    },
+function showErrorState(error) {
+    const errorHTML = `
+        <div id="data-error" style="
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-width: 500px;
+            z-index: 9999;
+        ">
+            <h3 style="color: #dc3545; margin-bottom: 15px;">⚠ Data Loading Error</h3>
+            <p style="color: #666; margin-bottom: 15px;">
+                Failed to load application data. Please ensure you're running a local server.
+            </p>
+            <details style="margin-bottom: 15px;">
+                <summary style="cursor: pointer; color: #007bff;">Technical Details</summary>
+                <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px; margin-top: 10px;">${error.message}</pre>
+            </details>
+            <button onclick="location.reload()" style="
+                background: #007bff;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: 600;
+            ">Retry</button>
+        </div>
+    `;
+    hideLoadingState();
+    document.body.insertAdjacentHTML('beforeend', errorHTML);
+}
 
-    // Add other missing solutions...
-    "Fish Friendly Trawling Net": {
-        name: "Fish Friendly Litter Removing Trawling Net",
-        category: "Collection",
-        trl: "8",
-        targetEnvironment: "Marine Fishing Operations",
-        description: "Specialized trawling net designed to collect litter while minimizing marine life capture.",
-        characteristics: {
-            "Technology Readiness Level": { value: "8", description: "Proven in operational environment" },
-            "Target Environment": { value: "Marine Fishing", description: "Commercial fishing operations" },
-            "Selectivity": { value: "High", description: "Marine life escape mechanisms" },
-            "Compatibility": { value: "Standard gear", description: "Retrofits existing equipment" }
-        },
-        performance: {
-            "Litter Collection": { value: "78%", unit: "debris capture" },
-            "Operating Cost": { value: "€200", unit: "per deployment" },
-            "Fish Mortality": { value: "<5%", unit: "vs. standard nets" },
-            "Durability": { value: "200", unit: "deployment cycles" }
-        },
-        applications: ["Commercial fishing", "Research vessels", "Cleanup operations"],
-        advantages: ["Dual purpose operation", "Marine life protection", "Industry integration"],
-        limitations: ["Fishing vessel required", "Weather dependent", "Crew training needed"]
-    }
-};
-
-// Merge additional solutions
-Object.assign(solutionsData, additionalSolutions);
-
-const campaignData = {
-    micro1: {
-        title: "Baltic Sea Microplastic Survey",
-        type: "Micro",
-        status: "Active",
-        location: "Estonia, Latvia, Lithuania",
-        duration: "2024-2025",
-        lead: "Tallinn University of Technology",
-        budget: "€450,000",
-        description: "Comprehensive study of microplastic distribution in Baltic Sea coastal waters, focusing on seasonal variations and pollution sources.",
-        objectives: [
-            "Quantify microplastic concentrations in coastal waters",
-            "Identify main sources of microplastic pollution",
-            "Assess seasonal and geographic variations",
-            "Engage local communities in data collection"
-        ],
-        technologies: ["Manta Net", "Marine LitterWatch App", "Citizen Engagement"],
-        results: [
-            { parameter: "Samples Collected", value: "8,432", unit: "samples" },
-            { parameter: "Microplastic Density", value: "2.3", unit: "particles/m³" },
-            { parameter: "Dominant Material", value: "PE/PP", unit: "% of total" },
-            { parameter: "Size Range", value: "0.3-5.0", unit: "mm" },
-            { parameter: "Volunteer Participants", value: "127", unit: "citizens" }
-        ]
-    },
-    micro2: {
-        title: "Mediterranean Beach Microlitter",
-        type: "Micro",
-        status: "Active",
-        location: "Italy, Spain, France",
-        duration: "2024-2026",
-        lead: "ENEA (Italian National Agency)",
-        budget: "€320,000",
-        description: "Systematic collection and analysis of microlitter on Mediterranean beaches using specialized filtration systems.",
-        objectives: [
-            "Map microlitter distribution on Mediterranean beaches",
-            "Test effectiveness of filtration technologies",
-            "Create standardized sampling protocols",
-            "Train local research teams"
-        ],
-        technologies: ["Clera Filtration Unit", "Ferrybox Sampling", "Drone Observations"],
-        results: [
-            { parameter: "Beach Sites", value: "15", unit: "locations" },
-            { parameter: "Microlitter Items", value: "3,712", unit: "items" },
-            { parameter: "Average Density", value: "145", unit: "items/m²" },
-            { parameter: "Plastic Fragments", value: "78", unit: "% of total" },
-            { parameter: "Research Teams", value: "8", unit: "teams" }
-        ]
-    },
-    macro1: {
-        title: "North Sea Floating Debris",
-        type: "Macro",
-        status: "Active",
-        location: "Netherlands, Germany, Denmark",
-        duration: "2023-2025",
-        lead: "DELTARES",
-        budget: "€680,000",
-        description: "Large-scale monitoring of floating debris in North Sea shipping routes using mounted cameras and sensor networks.",
-        objectives: [
-            "Monitor floating debris in shipping lanes",
-            "Assess impact on marine traffic",
-            "Develop automated detection systems",
-            "Create debris density maps"
-        ],
-        technologies: ["Mounted Camera", "JRC Floating Litter App", "Sensor Black Box"],
-        results: [
-            { parameter: "Monitoring Areas", value: "12", unit: "zones" },
-            { parameter: "Debris Items", value: "15,230", unit: "items" },
-            { parameter: "Plastic Bottles", value: "34", unit: "% of total" },
-            { parameter: "Detection Accuracy", value: "87", unit: "%" },
-            { parameter: "Ship Reports", value: "234", unit: "reports" }
-        ]
-    }
-};
+// Initialize data loading when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadData);
+} else {
+    loadData();
+}
 
 function toggleDropdown(event) {
     event.stopPropagation();
@@ -970,4 +575,330 @@ document.addEventListener('click', function(event) {
             item.querySelector('.submenu').classList.remove('open');
         });
     }
+});
+
+// Sampling Data Functions
+let currentFilteredSamples = [...campaignMicroSampleData];
+
+function formatDateTime(dateTimeString) {
+    const date = new Date(dateTimeString);
+    return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function formatCoordinate(lat, lon) {
+    const latDir = lat >= 0 ? 'N' : 'S';
+    const lonDir = lon >= 0 ? 'E' : 'W';
+    return `${Math.abs(lat).toFixed(4)}° ${latDir}, ${Math.abs(lon).toFixed(4)}° ${lonDir}`;
+}
+
+function renderSamplingData(samples = campaignMicroSampleData) {
+    const container = document.getElementById('sampling-samples-container');
+    if (!container) return;
+
+    currentFilteredSamples = samples;
+
+    if (samples.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <h4>No samples found</h4>
+                <p>Try adjusting your filters</p>
+            </div>
+        `;
+        document.getElementById('sample-count-display').textContent = 'Showing 0 of 0 samples';
+        return;
+    }
+
+    const html = samples.map(sample => {
+        const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === sample.id);
+        const qc = qualityControlData.find(q => q.campaign_micro_sample_id === sample.id);
+
+        return `
+            <div class="campaign-item" style="cursor: pointer; transition: all 0.3s ease;" onclick="showSampleDetail(${sample.id})">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                    <div>
+                        <h4 style="margin: 0 0 5px 0; color: #007bff;">${sample.sample_code}</h4>
+                        <div class="meta">
+                            Campaign ${sample.campaign_id} |
+                            <span class="status-active">${sample.data_type}</span> |
+                            ${sample.station_id} |
+                            ${formatDateTime(sample.sampling_date_start)}
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 24px; font-weight: 600; color: #28a745;">${sample.particles_total_concentration}</div>
+                        <div style="font-size: 12px; color: #666;">concentration</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 15px 0;">
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Sampling Method</div>
+                        <div style="font-weight: 600; font-size: 14px;">${sample.sampling_method}</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Survey Area</div>
+                        <div style="font-weight: 600; font-size: 14px;">${sample.survey_length} × ${sample.survey_width}</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Total Particles</div>
+                        <div style="font-weight: 600; font-size: 14px;">${sample.particles_total_count}</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Tire Wear Conc.</div>
+                        <div style="font-weight: 600; font-size: 14px;">${sample.tire_wear_concentration} µg/L</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                    <div>
+                        <div style="font-size: 12px; color: #666;">Start: ${formatCoordinate(sample.sampling_latitude_start, sample.sampling_longitude_start)}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #666;">End: ${formatCoordinate(sample.sampling_latitude_end, sample.sampling_longitude_end)}</div>
+                    </div>
+                </div>
+
+                ${sample.notes ? `
+                    <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-left: 3px solid #ffc107; border-radius: 4px; font-size: 13px;">
+                        <strong>Notes:</strong> ${sample.notes}
+                    </div>
+                ` : ''}
+
+                <div style="margin-top: 12px; display: flex; gap: 10px;">
+                    ${labAnalysis ? `<span class="tech-tag" style="background: #28a745;">Lab Analysis Available</span>` : ''}
+                    ${qc ? `<span class="tech-tag" style="background: #17a2b8;">QC: ${qc.control_pi}% Control</span>` : ''}
+                    <span class="tech-tag">${sample.spatial_or_temporal_monitoring}</span>
+                    <span class="tech-tag">Replicates: ${sample.replicate_count}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = html;
+    document.getElementById('sample-count-display').textContent =
+        `Showing ${samples.length} of ${campaignMicroSampleData.length} samples`;
+}
+
+function filterSamplingData() {
+    const campaignFilter = document.getElementById('filter-campaign').value;
+    const methodFilter = document.getElementById('filter-method').value;
+    const datatypeFilter = document.getElementById('filter-datatype').value;
+
+    let filtered = campaignMicroSampleData.filter(sample => {
+        const matchesCampaign = !campaignFilter || sample.campaign_id.toString() === campaignFilter;
+        const matchesMethod = !methodFilter || sample.sampling_method === methodFilter;
+        const matchesDatatype = !datatypeFilter || sample.data_type === datatypeFilter;
+
+        return matchesCampaign && matchesMethod && matchesDatatype;
+    });
+
+    renderSamplingData(filtered);
+}
+
+function resetFilters() {
+    document.getElementById('filter-campaign').value = '';
+    document.getElementById('filter-method').value = '';
+    document.getElementById('filter-datatype').value = '';
+    renderSamplingData(campaignMicroSampleData);
+}
+
+function showSampleDetail(sampleId) {
+    const sample = campaignMicroSampleData.find(s => s.id === sampleId);
+    if (!sample) return;
+
+    const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === sampleId);
+    const qc = qualityControlData.find(q => q.campaign_micro_sample_id === sampleId);
+
+    const content = `
+        <div class="breadcrumb">
+            <a onclick="showView('overview')">Overview</a> >
+            <a onclick="showView('sampling-data')">Sampling Data</a> >
+            ${sample.sample_code}
+        </div>
+        <h2>${sample.sample_code} - Detailed View</h2>
+
+        <!-- Key Metrics -->
+        <div class="stats">
+            <div class="stat-card">
+                <h4>Total Particles</h4>
+                <div class="number">${sample.particles_total_count}</div>
+            </div>
+            <div class="stat-card">
+                <h4>Concentration</h4>
+                <div class="number">${sample.particles_total_concentration}</div>
+            </div>
+            <div class="stat-card">
+                <h4>Total Weight</h4>
+                <div class="number">${sample.particles_total_weight}</div>
+            </div>
+            <div class="stat-card">
+                <h4>Duration</h4>
+                <div class="number">${sample.sampling_duration_hours}</div>
+                <small>hours</small>
+            </div>
+        </div>
+
+        <!-- Sample Information -->
+        <div class="section">
+            <h3>Sample Information</h3>
+            <table class="data-table">
+                <tr><td><strong>Sample Code</strong></td><td>${sample.sample_code}</td></tr>
+                <tr><td><strong>Campaign ID</strong></td><td>${sample.campaign_id}</td></tr>
+                <tr><td><strong>Station ID</strong></td><td>${sample.station_id}</td></tr>
+                <tr><td><strong>Data Type</strong></td><td><span class="status-active">${sample.data_type}</span></td></tr>
+                <tr><td><strong>Monitoring Type</strong></td><td>${sample.spatial_or_temporal_monitoring}</td></tr>
+                <tr><td><strong>Sampling Method</strong></td><td>${sample.sampling_method}</td></tr>
+                <tr><td><strong>Sampling Instrument</strong></td><td>${sample.sampling_instrument} (${sample.sampling_instrument_group})</td></tr>
+                <tr><td><strong>Protocol Reference</strong></td><td>${sample.sampling_protocol_reference}</td></tr>
+            </table>
+        </div>
+
+        <!-- Temporal & Spatial Data -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="section">
+                <h3>Temporal Data</h3>
+                <table class="data-table">
+                    <tr><td><strong>Start Time</strong></td><td>${formatDateTime(sample.sampling_date_start)}</td></tr>
+                    <tr><td><strong>End Time</strong></td><td>${formatDateTime(sample.sampling_date_end)}</td></tr>
+                    <tr><td><strong>Duration</strong></td><td>${sample.sampling_duration_hours} hours</td></tr>
+                    <tr><td><strong>Time Reference</strong></td><td>${sample.sampling_time_reference}</td></tr>
+                </table>
+            </div>
+
+            <div class="section">
+                <h3>Spatial Data</h3>
+                <table class="data-table">
+                    <tr><td><strong>Start Position</strong></td><td>${formatCoordinate(sample.sampling_latitude_start, sample.sampling_longitude_start)}</td></tr>
+                    <tr><td><strong>End Position</strong></td><td>${formatCoordinate(sample.sampling_latitude_end, sample.sampling_longitude_end)}</td></tr>
+                    <tr><td><strong>Survey Length</strong></td><td>${sample.survey_length}</td></tr>
+                    <tr><td><strong>Survey Width</strong></td><td>${sample.survey_width}</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Flowmeter Data -->
+        <div class="section">
+            <h3>Flowmeter & Equipment</h3>
+            <table class="data-table">
+                <tr><td><strong>Flowmeter Model</strong></td><td>${sample.flowmeter_model}</td></tr>
+                <tr><td><strong>Flowmeter Equation</strong></td><td><code>${sample.flowmeter_equation}</code></td></tr>
+                <tr><td><strong>Start Count</strong></td><td>${sample.flowmeter_start_count}</td></tr>
+                <tr><td><strong>End Count</strong></td><td>${sample.flowmeter_end_count}</td></tr>
+            </table>
+        </div>
+
+        <!-- Particle Analysis Results -->
+        <div class="section">
+            <h3>Particle Analysis Results</h3>
+            <table class="data-table">
+                <tr><td><strong>Total Particle Count</strong></td><td>${sample.particles_total_count}</td></tr>
+                <tr><td><strong>Total Weight</strong></td><td>${sample.particles_total_weight}</td></tr>
+                <tr><td><strong>Total Concentration</strong></td><td>${sample.particles_total_concentration}</td></tr>
+                <tr><td><strong>Tire Marker Concentration</strong></td><td>${sample.tire_marker_concentration} µg/L</td></tr>
+                <tr><td><strong>Tire Wear Concentration</strong></td><td>${sample.tire_wear_concentration} µg/L</td></tr>
+                <tr><td><strong>Tire Wear Conc. (Volume)</strong></td><td>${sample.tire_wear_concentration_volume} µg/L</td></tr>
+                <tr><td><strong>Tire Wear Leachable Total</strong></td><td>${sample.tire_wear_leachable_total_concentration} µg/L</td></tr>
+            </table>
+        </div>
+
+        <!-- Lab Analysis -->
+        ${labAnalysis ? `
+        <div class="section">
+            <h3>Laboratory Analysis</h3>
+            <table class="data-table">
+                <tr><td><strong>Analysis ID</strong></td><td>${labAnalysis.id}</td></tr>
+                <tr><td><strong>Digestion</strong></td><td>${labAnalysis.digestion_y_n}</td></tr>
+                ${labAnalysis.digestion_y_n === 'Yes' ? `
+                    <tr><td><strong>Digestion Solution</strong></td><td>${labAnalysis.digestion_solution}</td></tr>
+                    <tr><td><strong>Temperature</strong></td><td>${labAnalysis.digestion_temperature_c}°C</td></tr>
+                    <tr><td><strong>Time</strong></td><td>${labAnalysis.digestion_time_h} hours</td></tr>
+                ` : ''}
+                <tr><td><strong>Recovery Solution</strong></td><td>${labAnalysis.recovery_solution}</td></tr>
+                <tr><td><strong>Density Solution</strong></td><td>${labAnalysis.density_solution_g_cm3} g/cm³</td></tr>
+                <tr><td><strong>Recovery Particles</strong></td><td><span style="color: #28a745; font-weight: 600;">${labAnalysis.recovery_particles}</span></td></tr>
+            </table>
+
+            <h4 style="margin-top: 20px;">Polymer Identification</h4>
+            <table class="data-table">
+                <tr><td><strong>PI Method</strong></td><td>${labAnalysis.polymer_identification}</td></tr>
+                <tr><td><strong>PI Instrument</strong></td><td>${labAnalysis.pi_instrument}</td></tr>
+                <tr><td><strong>PI Technique</strong></td><td>${labAnalysis.pi_method_technique}</td></tr>
+                <tr><td><strong>PI Compartment</strong></td><td><span class="tech-tag">${labAnalysis.pi_compartment}</span></td></tr>
+                <tr><td><strong>PI Percentage</strong></td><td>${labAnalysis.pi_percentage}%</td></tr>
+                <tr><td><strong>PI Number of Particles</strong></td><td>${labAnalysis.pi_number_particles}</td></tr>
+                <tr><td><strong>Fibers</strong></td><td>${labAnalysis.fibers}</td></tr>
+            </table>
+        </div>
+        ` : '<div class="section"><p style="color: #666;">No lab analysis data available for this sample.</p></div>'}
+
+        <!-- Quality Control -->
+        ${qc ? `
+        <div class="section">
+            <h3>Quality Control</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px; color: white;">
+                    <div style="font-size: 14px; margin-bottom: 5px;">Blanks</div>
+                    <div style="font-size: 32px; font-weight: 600;">${qc.blanks}</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Blank PI: ${qc.blanck_pi}%</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 20px; border-radius: 8px; color: white;">
+                    <div style="font-size: 14px; margin-bottom: 5px;">Controls</div>
+                    <div style="font-size: 32px; font-weight: 600;">${qc.control}</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Control PI: ${qc.control_pi}%</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 20px; border-radius: 8px; color: white;">
+                    <div style="font-size: 14px; margin-bottom: 5px;">Data Correction</div>
+                    <div style="font-size: 32px; font-weight: 600;">${qc.data_correction ? 'Yes' : 'No'}</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Applied to results</div>
+                </div>
+            </div>
+        </div>
+        ` : '<div class="section"><p style="color: #666;">No quality control data available for this sample.</p></div>'}
+
+        <!-- Sample Metadata -->
+        <div class="section">
+            <h3>Sample Metadata</h3>
+            <table class="data-table">
+                <tr><td><strong>Total Samples in Series</strong></td><td>${sample.total_samples}</td></tr>
+                <tr><td><strong>Replicate Count</strong></td><td>${sample.replicate_count}</td></tr>
+                <tr><td><strong>Quadrant Placement</strong></td><td>${sample.quadrant_placement}</td></tr>
+                <tr><td><strong>Compartment Type</strong></td><td>${sample.compartment_type}</td></tr>
+                <tr><td><strong>Technology ID</strong></td><td>${sample.technology_id}</td></tr>
+                <tr><td><strong>Location ID</strong></td><td>${sample.location_id}</td></tr>
+                <tr><td><strong>User ID</strong></td><td>${sample.user_id}</td></tr>
+                <tr><td><strong>Created At</strong></td><td>${formatDateTime(sample.created_at)}</td></tr>
+                <tr><td><strong>Updated At</strong></td><td>${formatDateTime(sample.updated_at)}</td></tr>
+            </table>
+        </div>
+
+        ${sample.notes ? `
+        <div class="section">
+            <h3>Notes</h3>
+            <div style="background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; border-radius: 4px;">
+                ${sample.notes}
+            </div>
+        </div>
+        ` : ''}
+    `;
+
+    // Hide all views
+    document.querySelectorAll('.view').forEach(view => {
+        view.classList.add('hidden');
+    });
+
+    // Show sampling data view and update its content
+    const samplingDataView = document.getElementById('sampling-data');
+    samplingDataView.classList.remove('hidden');
+    samplingDataView.innerHTML = content;
+}
+
+// Initialize sampling data view when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    renderSamplingData();
 });

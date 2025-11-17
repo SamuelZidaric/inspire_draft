@@ -1,0 +1,146 @@
+{
+  "micro1": {
+    "title": "Baltic Sea Microplastic Survey",
+    "type": "Micro",
+    "status": "Active",
+    "location": "Estonia, Latvia, Lithuania",
+    "duration": "2024-2025",
+    "lead": "Tallinn University of Technology",
+    "budget": "€450,000",
+    "description": "Comprehensive study of microplastic distribution in Baltic Sea coastal waters, focusing on seasonal variations and pollution sources.",
+    "objectives": [
+      "Quantify microplastic concentrations in coastal waters",
+      "Identify main sources of microplastic pollution",
+      "Assess seasonal and geographic variations",
+      "Engage local communities in data collection"
+    ],
+    "technologies": [
+      "Manta Net",
+      "Marine LitterWatch App",
+      "Citizen Engagement"
+    ],
+    "results": [
+      {
+        "parameter": "Samples Collected",
+        "value": "8,432",
+        "unit": "samples"
+      },
+      {
+        "parameter": "Microplastic Density",
+        "value": "2.3",
+        "unit": "particles/m³"
+      },
+      {
+        "parameter": "Dominant Material",
+        "value": "PE/PP",
+        "unit": "% of total"
+      },
+      {
+        "parameter": "Size Range",
+        "value": "0.3-5.0",
+        "unit": "mm"
+      },
+      {
+        "parameter": "Volunteer Participants",
+        "value": "127",
+        "unit": "citizens"
+      }
+    ]
+  },
+  "micro2": {
+    "title": "Mediterranean Beach Microlitter",
+    "type": "Micro",
+    "status": "Active",
+    "location": "Italy, Spain, France",
+    "duration": "2024-2026",
+    "lead": "ENEA (Italian National Agency)",
+    "budget": "€320,000",
+    "description": "Systematic collection and analysis of microlitter on Mediterranean beaches using specialized filtration systems.",
+    "objectives": [
+      "Map microlitter distribution on Mediterranean beaches",
+      "Test effectiveness of filtration technologies",
+      "Create standardized sampling protocols",
+      "Train local research teams"
+    ],
+    "technologies": [
+      "Clera Filtration Unit",
+      "Ferrybox Sampling",
+      "Drone Observations"
+    ],
+    "results": [
+      {
+        "parameter": "Beach Sites",
+        "value": "15",
+        "unit": "locations"
+      },
+      {
+        "parameter": "Microlitter Items",
+        "value": "3,712",
+        "unit": "items"
+      },
+      {
+        "parameter": "Average Density",
+        "value": "145",
+        "unit": "items/m²"
+      },
+      {
+        "parameter": "Plastic Fragments",
+        "value": "78",
+        "unit": "% of total"
+      },
+      {
+        "parameter": "Research Teams",
+        "value": "8",
+        "unit": "teams"
+      }
+    ]
+  },
+  "macro1": {
+    "title": "North Sea Floating Debris",
+    "type": "Macro",
+    "status": "Active",
+    "location": "Netherlands, Germany, Denmark",
+    "duration": "2023-2025",
+    "lead": "DELTARES",
+    "budget": "€680,000",
+    "description": "Large-scale monitoring of floating debris in North Sea shipping routes using mounted cameras and sensor networks.",
+    "objectives": [
+      "Monitor floating debris in shipping lanes",
+      "Assess impact on marine traffic",
+      "Develop automated detection systems",
+      "Create debris density maps"
+    ],
+    "technologies": [
+      "Mounted Camera",
+      "JRC Floating Litter App",
+      "Sensor Black Box"
+    ],
+    "results": [
+      {
+        "parameter": "Monitoring Areas",
+        "value": "12",
+        "unit": "zones"
+      },
+      {
+        "parameter": "Debris Items",
+        "value": "15,230",
+        "unit": "items"
+      },
+      {
+        "parameter": "Plastic Bottles",
+        "value": "34",
+        "unit": "% of total"
+      },
+      {
+        "parameter": "Detection Accuracy",
+        "value": "87",
+        "unit": "%"
+      },
+      {
+        "parameter": "Ship Reports",
+        "value": "234",
+        "unit": "reports"
+      }
+    ]
+  }
+}
