@@ -13,6 +13,11 @@ let campaignMicroSampleData = [];
 let labAnalysisData = [];
 let qualityControlData = [];
 
+// Database-aligned data structures
+let campaignsDB = [];
+let locationsDB = [];
+let organisationsDB = [];
+
 // Loading state
 let dataLoaded = false;
 let dataLoadError = null;
@@ -21,15 +26,18 @@ let dataLoadError = null;
 async function loadData() {
     try {
         showLoadingState();
-        
+
         // Load all data files in parallel
-        const [demoSites, solutions, campaigns, microSamples, labAnalysis, qualityControl] = await Promise.all([
+        const [demoSites, solutions, campaigns, microSamples, labAnalysis, qualityControl, campaignsDb, locationsDb, organisationsDb] = await Promise.all([
             fetch('data/demo_sites.json').then(r => r.json()),
             fetch('data/solutions.json').then(r => r.json()),
             fetch('data/campaigns.json').then(r => r.json()),
             fetch('data/campaign_micro_samples.json').then(r => r.json()),
             fetch('data/lab_analysis.json').then(r => r.json()),
-            fetch('data/quality_control.json').then(r => r.json())
+            fetch('data/quality_control.json').then(r => r.json()),
+            fetch('data/campaigns_db.json').then(r => r.json()),
+            fetch('data/locations.json').then(r => r.json()),
+            fetch('data/organisations.json').then(r => r.json())
         ]);
 
         // Assign to global variables
@@ -40,6 +48,11 @@ async function loadData() {
         labAnalysisData = labAnalysis;
         qualityControlData = qualityControl;
 
+        // Assign database-aligned structures
+        campaignsDB = campaignsDb;
+        locationsDB = locationsDb;
+        organisationsDB = organisationsDb;
+
         dataLoaded = true;
         hideLoadingState();
         
@@ -49,6 +62,12 @@ async function loadData() {
         }
         
         console.log('✓ All data loaded successfully');
+        console.log('✓ Database tables aligned:', {
+            campaigns: campaignsDB.length,
+            locations: locationsDB.length,
+            organisations: organisationsDB.length,
+            samples: campaignMicroSampleData.length
+        });
         return true;
     } catch (error) {
         console.error('Error loading data:', error);
@@ -56,6 +75,49 @@ async function loadData() {
         showErrorState(error);
         return false;
     }
+}
+
+// Helper functions for data relationships
+function getCampaignById(id) {
+    return campaignsDB.find(c => c.id === id);
+}
+
+function getLocationById(id) {
+    return locationsDB.find(l => l.id === id);
+}
+
+function getOrganisationById(id) {
+    return organisationsDB.find(o => o.id === id);
+}
+
+function enrichSampleWithRelatedData(sample) {
+    const enriched = { ...sample };
+
+    if (sample.campaign_id) {
+        const campaign = getCampaignById(sample.campaign_id);
+        if (campaign) {
+            enriched.campaign = campaign;
+
+            // Get location and organisation through campaign
+            if (campaign.location_id) {
+                enriched.location = getLocationById(campaign.location_id);
+            }
+            if (campaign.organisation_id) {
+                enriched.organisation = getOrganisationById(campaign.organisation_id);
+            }
+        }
+    }
+
+    // Also get direct location if available
+    if (sample.location_id && !enriched.location) {
+        enriched.location = getLocationById(sample.location_id);
+    }
+
+    return enriched;
+}
+
+function getAllEnrichedSamples() {
+    return campaignMicroSampleData.map(enrichSampleWithRelatedData);
 }
 
 // Loading state UI functions
