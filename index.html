@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Litter Monitoring Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Litter Monitoring</h3>
+            <ul>
+                <li class="active" onclick="showView('overview')">Overview</li>
+                <li class="has-dropdown" onclick="toggleDropdown(event)">
+                    Campaigns
+                    <ul class="submenu">
+                        <li onclick="showView('micro', event)">Micro</li>
+                        <li onclick="showView('macro', event)">Macro</li>
+                    </ul>
+                </li>
+                <li class="has-dropdown" onclick="toggleDropdown(event)">
+                    Demo Sites
+                    <ul class="submenu">
+                        <li onclick="showDemoSite('domzale', event)">Domžale-Kamnik WWTP</li>
+                        <li onclick="showDemoSite('po-gnocca', event)">River Po - Po di Gnocca</li>
+                        <li onclick="showDemoSite('douro', event)">The Douro River</li>
+                        <li onclick="showDemoSite('danube', event)">The Danube River</li>
+                    </ul>
+                </li>
+                <li onclick="showView('solutions')">Solutions</li>
+                <li onclick="showView('impact')">Impact Dashboard</li>
+            </ul>
+        </div>
+
+        <div class="main">
+            <!-- Overview -->
+            <div id="overview" class="view">
+                <h2>Overview</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>Total Campaigns</h4>
+                        <div class="number">8</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Active Technologies</h4>
+                        <div class="number">25</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Data Points</h4>
+                        <div class="number">26,277</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Countries</h4>
+                        <div class="number">15</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Campaign Types</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div onclick="showView('micro')" style="cursor: pointer; padding: 20px; border: 2px solid #007bff; border-radius: 8px; text-align: center;">
+                            <h4>Micro Campaigns</h4>
+                            <div class="number" style="color: #007bff;">2</div>
+                            <p>Small-scale monitoring</p>
+                        </div>
+                        <div onclick="showView('macro')" style="cursor: pointer; padding: 20px; border: 2px solid #28a745; border-radius: 8px; text-align: center;">
+                            <h4>Macro Campaigns</h4>
+                            <div class="number" style="color: #28a745;">6</div>
+                            <p>Large-scale monitoring</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Micro Campaigns -->
+            <div id="micro" class="view hidden">
+                <div class="breadcrumb">
+                    <a onclick="showView('overview')">Overview</a> > Micro Campaigns
+                </div>
+                <h2>Micro Campaigns (2)</h2>
+
+                <div class="section">
+                    <div class="campaign-list">
+                        <div class="campaign-item" onclick="showCampaignDetail('micro1')">
+                            <h4>Baltic Sea Microplastic Survey</h4>
+                            <div class="meta">Detection | <span class="status-active">Active</span> | Estonia, Latvia, Lithuania | 2024-2025</div>
+                            <p>Monitoring microplastics in Baltic coastal waters using advanced filtration techniques and citizen engagement.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Manta Net</span>
+                                <span class="tech-tag">Marine LitterWatch App</span>
+                                <span class="tech-tag">Citizen Engagement</span>
+                            </div>
+                        </div>
+                        <div class="campaign-item" onclick="showCampaignDetail('micro2')">
+                            <h4>Mediterranean Beach Microlitter</h4>
+                            <div class="meta">Collection | <span class="status-active">Active</span> | Italy, Spain, France | 2024-2026</div>
+                            <p>Systematic collection and analysis of microlitter on Mediterranean beaches using specialized filtration systems.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Clera Filtration Unit</span>
+                                <span class="tech-tag">Ferrybox Sampling</span>
+                                <span class="tech-tag">Drone Observations</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Macro Campaigns -->
+            <div id="macro" class="view hidden">
+                <div class="breadcrumb">
+                    <a onclick="showView('overview')">Overview</a> > Macro Campaigns
+                </div>
+                <h2>Macro Campaigns (6)</h2>
+
+                <div class="section">
+                    <div class="campaign-list">
+                        <div class="campaign-item" onclick="showCampaignDetail('macro1')">
+                            <h4>North Sea Floating Debris</h4>
+                            <div class="meta">Detection | <span class="status-active">Active</span> | Netherlands, Germany, Denmark | 2023-2025</div>
+                            <p>Large-scale monitoring of floating debris in North Sea shipping routes using mounted cameras and sensor networks.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Mounted Camera</span>
+                                <span class="tech-tag">JRC Floating Litter App</span>
+                                <span class="tech-tag">Sensor Black Box</span>
+                            </div>
+                        </div>
+                        <div class="campaign-item" onclick="showCampaignDetail('macro2')">
+                            <h4>Atlantic Coastal Cleanup</h4>
+                            <div class="meta">Collection | <span class="status-active">Active</span> | Portugal, Ireland, UK | 2024-2025</div>
+                            <p>Coordinated cleanup efforts using innovative collection systems and community engagement programs.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Clean Trash Collection Cage</span>
+                                <span class="tech-tag">Fish Friendly Trawling Net</span>
+                                <span class="tech-tag">Citizen Engagement</span>
+                            </div>
+                        </div>
+                        <div class="campaign-item" onclick="showCampaignDetail('macro3')">
+                            <h4>River Litter Prevention</h4>
+                            <div class="meta">Prevention | <span class="status-planning">Planning</span> | Germany, Austria, Czech Republic | 2025-2027</div>
+                            <p>Prevention strategies for major European river systems using advanced filtration and coating technologies.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Super-TW-Net Filter</span>
+                                <span class="tech-tag">EcoPlex Remover</span>
+                                <span class="tech-tag">Food Coating</span>
+                            </div>
+                        </div>
+                        <div class="campaign-item" onclick="showCampaignDetail('macro4')">
+                            <h4>Urban Waterway Monitoring</h4>
+                            <div class="meta">Detection | <span class="status-active">Active</span> | Multiple Cities | 2024-2026</div>
+                            <p>Monitoring litter in urban waterways across 12 European cities using drone technology and water sensors.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Drone Observations</span>
+                                <span class="tech-tag">Infordata Water Sensor</span>
+                                <span class="tech-tag">CirCleaner</span>
+                            </div>
+                        </div>
+                        <div class="campaign-item" onclick="showCampaignDetail('macro5')">
+                            <h4>Fisheries Bycatch Study</h4>
+                            <div class="meta">Collection | <span class="status-active">Active</span> | North Atlantic | 2023-2025</div>
+                            <p>Analysis of litter collected as fisheries bycatch using specialized trawling equipment.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Fish Friendly Trawling Net</span>
+                                <span class="tech-tag">Archimedean Drum Screw</span>
+                            </div>
+                        </div>
+                        <div class="campaign-item" onclick="showCampaignDetail('macro6')">
+                            <h4>Beach Monitoring Network</h4>
+                            <div class="meta">Detection | <span class="status-active">Active</span> | 45 Locations | 2022-2025</div>
+                            <p>Standardized beach monitoring across 45 European locations using citizen science and mobile apps.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Marine LitterWatch App</span>
+                                <span class="tech-tag">Citizen Engagement</span>
+                                <span class="tech-tag">Mounted Camera</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaign Detail View -->
+            <div id="campaign-detail" class="view hidden">
+                <button class="back-btn" onclick="goBackToCampaigns()">← Back to Campaigns</button>
+                <div id="campaign-content">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Solution Detail View -->
+            <div id="solution-detail" class="view hidden">
+                <button class="back-btn" onclick="goBackFromSolution()">← Back</button>
+                <div id="solution-content">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Demo Site View -->
+            <div id="demo-site" class="view hidden">
+                <button class="back-btn" onclick="showView('overview')">← Back to Overview</button>
+                <div id="demo-site-content">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Solutions (formerly Technologies) -->
+            <div id="solutions" class="view hidden">
+                <div class="breadcrumb">
+                    <a onclick="showView('overview')">Overview</a> > Solutions
+                </div>
+                <h2>Solutions (25)</h2>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>Detection</h4>
+                        <div class="number">9</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Collection</h4>
+                        <div class="number">8</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Prevention</h4>
+                        <div class="number">8</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Detection Technologies</h3>
+                    <div class="tech-list">
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Mounted Camera')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Mounted Camera</h5><div class="tech-meta">Visual monitoring | 3 campaigns</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Drone Observations')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Drone Observations</h5><div class="tech-meta">Aerial surveillance | 2 campaigns</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('JRC Floating Litter App')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>JRC Floating Litter Monitoring App</h5><div class="tech-meta">Mobile reporting | 1 campaign</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Marine LitterWatch App')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Marine LitterWatch App</h5><div class="tech-meta">Citizen science | 2 campaigns</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Ferrybox Sampling')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Ferrybox Sampling Device</h5><div class="tech-meta">Water sampling | 1 campaign</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Manta Net')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Manta Net</h5><div class="tech-meta">Surface trawling | 1 campaign</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Citizen Engagement')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Citizen Engagement</h5><div class="tech-meta">Community monitoring | 4 campaigns</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Sensor Black Box')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Sensor Black Box</h5><div class="tech-meta">Automated detection | 1 campaign</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Infordata Water Sensor')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Infordata Water Sensor Kit</h5><div class="tech-meta">Water quality sensors | 1 campaign</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Collection Technologies</h3>
+                    <div class="tech-list">
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Archimedean Drum Screw')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Archimedean Drum Screw</h5><div class="tech-meta">Mechanical collection | 1 campaign</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Fish Friendly Trawling Net')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Fish Friendly Litter Removing Trawling Net</h5><div class="tech-meta">Selective trawling | 2 campaigns</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('River Cleaning System')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>River Cleaning System</h5><div class="tech-meta">Riverine collection | 0 campaigns</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Clean Trash Collection Cage')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Clean Trash Collection Cage</h5><div class="tech-meta">Coastal collection | 1 campaign</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('CirCleaner')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>CirCleaner</h5><div class="tech-meta">Urban waterway cleaning | 1 campaign</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Patje Plastic')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Patje Plastic</h5><div class="tech-meta">Plastic recovery | 0 campaigns</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Clera Filtration Unit')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Clera Special Membrane Filtration Unit</h5><div class="tech-meta">Micro-filtration | 1 campaign</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Prevention Technologies</h3>
+                    <div class="tech-list">
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Super-TW-Net Filter')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Super-TW-Net Filter for Tyre Microplastics</h5><div class="tech-meta">Tire particle filtering | 1 campaign</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Photocatalytic Nanocoating')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Photocatalytic Nanocoating Device</h5><div class="tech-meta">Self-cleaning surfaces | 0 campaigns</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('EcoPlex Remover')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>EcoPlex Microplastic Remover</h5><div class="tech-meta">Microplastic extraction | 1 campaign</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Zero Waste Cosmetics')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Zero Waste Cosmetics</h5><div class="tech-meta">Sustainable packaging | 0 campaigns</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('PHA Applications')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>PHA for Agriculture or Coated Paper Applications</h5><div class="tech-meta">Biodegradable alternatives | 0 campaigns</div>
+                        </div>
+                        <div class="tech-item tech-clickable" onclick="showSolutionDetail('Food Coating')">
+                            <div class="tech-3d-container">
+                                <div class="tech-3d-object">
+                                    <div class="tech-face tech-front"></div>
+                                    <div class="tech-face tech-back"></div>
+                                    <div class="tech-face tech-right"></div>
+                                    <div class="tech-face tech-left"></div>
+                                    <div class="tech-face tech-top"></div>
+                                    <div class="tech-face tech-bottom"></div>
+                                </div>
+                            </div>
+                            <h5>Food Coating</h5><div class="tech-meta">Edible packaging | 1 campaign</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Impact Dashboard -->
+            <div id="impact" class="view hidden">
+                <div class="breadcrumb">
+                    <a onclick="showView('overview')">Overview</a> > Impact Dashboard
+                </div>
+                <h2>Impact Dashboard</h2>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>Litter Collected</h4>
+                        <div class="number">82.4</div>
+                        <small>Tonnes</small>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Water Area Cleaned</h4>
+                        <div class="number">1,247</div>
+                        <small>km²</small>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Volunteers Engaged</h4>
+                        <div class="number">3,429</div>
+                        <small>Citizens</small>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Scientific Papers</h4>
+                        <div class="number">47</div>
+                        <small>Publications</small>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Environmental Impact</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="stat-card">
+                            <h4>Marine Life Protected</h4>
+                            <div class="number">~15,000</div>
+                            <small>Estimated animals</small>
+                        </div>
+                        <div class="stat-card">
+                            <h4>Microplastic Reduction</h4>
+                            <div class="number">23%</div>
+                            <small>In monitored areas</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Research Impact</h3>
+                    <div class="campaign-list">
+                        <div class="campaign-item">
+                            <h4>Policy Recommendations</h4>
+                            <div class="meta">12 recommendations submitted to EU Commission</div>
+                            <p>Evidence-based policy suggestions for marine litter reduction strategies.</p>
+                        </div>
+                        <div class="campaign-item">
+                            <h4>Technology Transfer</h4>
+                            <div class="meta">8 solutions commercialized</div>
+                            <p>Successful transfer of innovative technologies to private sector.</p>
+                        </div>
+                        <div class="campaign-item">
+                            <h4>Citizen Science Network</h4>
+                            <div class="meta">45 communities engaged</div>
+                            <p>Established long-term monitoring capabilities in coastal communities.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data (keeping for potential future use) -->
+            <div id="data" class="view hidden">
+                <div class="breadcrumb">
+                    <a onclick="showView('overview')">Overview</a> > Data & Reports
+                </div>
+                <h2>Data & Reports</h2>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>Micro Publications</h4>
+                        <div class="number">12,144</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Macro Publications</h4>
+                        <div class="number">14,133</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
