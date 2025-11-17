@@ -1,0 +1,70 @@
+{
+  "domzale": {
+    "name": "Domžale-Kamnik Wastewater Treatment Plant (WWTP)",
+    "location": "Slovenia",
+    "type": "Wastewater Treatment Facility",
+    "coordinates": "46.1373° N, 14.5961° E",
+    "capacity": "45,000 population equivalent",
+    "commissioning": "2019",
+    "description": "Advanced wastewater treatment plant serving the municipalities of Domžale and Kamnik, equipped with state-of-the-art sensors for real-time water quality monitoring.",
+    "technologies": ["Biological treatment", "Nutrient removal", "Advanced oxidation"],
+    "sensors": {
+      "ph": {"name": "pH Level", "unit": "pH", "min": 6.8, "max": 8.2, "optimal": [7.0, 7.5], "current": 7.2},
+      "orp": {"name": "Oxidation-Reduction Potential", "unit": "mV", "min": 150, "max": 350, "optimal": [200, 300], "current": 245},
+      "turbidity": {"name": "Turbidity", "unit": "NTU", "min": 0.5, "max": 15, "optimal": [1, 5], "current": 3.2},
+      "cod": {"name": "Chemical Oxygen Demand", "unit": "mg/L", "min": 10, "max": 80, "optimal": [15, 30], "current": 22},
+      "conductivity": {"name": "Conductivity", "unit": "μS/cm", "min": 400, "max": 1200, "optimal": [500, 800], "current": 650}
+    }
+  },
+  "po-gnocca": {
+    "name": "River Po' - Po di Gnocca",
+    "location": "Italy",
+    "type": "River Monitoring Station",
+    "coordinates": "45.0348° N, 12.1734° E",
+    "capacity": "Major tributary monitoring",
+    "commissioning": "2020",
+    "description": "Strategic monitoring point on the Po di Gnocca branch of the River Po system, tracking water quality parameters to assess environmental impact and litter transport.",
+    "technologies": ["Flow measurement", "Water quality sensors", "Automated sampling"],
+    "sensors": {
+      "ph": {"name": "pH Level", "unit": "pH", "min": 7.5, "max": 8.8, "optimal": [7.8, 8.2], "current": 8.0},
+      "orp": {"name": "Oxidation-Reduction Potential", "unit": "mV", "min": 100, "max": 280, "optimal": [150, 220], "current": 185},
+      "turbidity": {"name": "Turbidity", "unit": "NTU", "min": 2, "max": 35, "optimal": [5, 15], "current": 8.7},
+      "cod": {"name": "Chemical Oxygen Demand", "unit": "mg/L", "min": 8, "max": 45, "optimal": [10, 20], "current": 14},
+      "conductivity": {"name": "Conductivity", "unit": "μS/cm", "min": 200, "max": 600, "optimal": [250, 400], "current": 320}
+    }
+  },
+  "douro": {
+    "name": "The Douro River",
+    "location": "Portugal",
+    "type": "Major River Monitoring",
+    "coordinates": "41.1579° N, 8.6291° W",
+    "capacity": "International watershed monitoring",
+    "commissioning": "2021",
+    "description": "Critical monitoring station on the Douro River, one of the major rivers of the Iberian Peninsula, tracking transboundary water quality and pollution transport.",
+    "technologies": ["Multi-parameter probes", "Telemetry systems", "Weather station integration"],
+    "sensors": {
+      "ph": {"name": "pH Level", "unit": "pH", "min": 7.2, "max": 8.5, "optimal": [7.5, 8.0], "current": 7.8},
+      "orp": {"name": "Oxidation-Reduction Potential", "unit": "mV", "min": 120, "max": 300, "optimal": [160, 240], "current": 198},
+      "turbidity": {"name": "Turbidity", "unit": "NTU", "min": 1, "max": 25, "optimal": [2, 8], "current": 5.1},
+      "cod": {"name": "Chemical Oxygen Demand", "unit": "mg/L", "min": 5, "max": 30, "optimal": [8, 15], "current": 11},
+      "conductivity": {"name": "Conductivity", "unit": "μS/cm", "min": 150, "max": 450, "optimal": [180, 300], "current": 235}
+    }
+  },
+  "danube": {
+    "name": "The Danube River",
+    "location": "Multi-national",
+    "type": "International River Monitoring",
+    "coordinates": "48.2082° N, 16.3738° E",
+    "capacity": "Continental watershed monitoring",
+    "commissioning": "2020",
+    "description": "Strategic monitoring point on the Danube River near Vienna, part of the international monitoring network for Europe's second-longest river system.",
+    "technologies": ["Automated monitoring stations", "Satellite telemetry", "Cross-border data sharing"],
+    "sensors": {
+      "ph": {"name": "pH Level", "unit": "pH", "min": 7.8, "max": 8.6, "optimal": [8.0, 8.3], "current": 8.1},
+      "orp": {"name": "Oxidation-Reduction Potential", "unit": "mV", "min": 180, "max": 320, "optimal": [200, 280], "current": 235},
+      "turbidity": {"name": "Turbidity", "unit": "NTU", "min": 3, "max": 40, "optimal": [5, 20], "current": 12.3},
+      "cod": {"name": "Chemical Oxygen Demand", "unit": "mg/L", "min": 12, "max": 50, "optimal": [15, 25], "current": 18},
+      "conductivity": {"name": "Conductivity", "unit": "μS/cm", "min": 300, "max": 800, "optimal": [400, 600], "current": 485}
+    }
+  }
+}
