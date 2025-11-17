@@ -41,19 +41,19 @@
                 <div class="stats">
                     <div class="stat-card">
                         <h4>Total Campaigns</h4>
-                        <div class="number">8</div>
+                        <div class="number">4</div>
                     </div>
                     <div class="stat-card">
                         <h4>Active Technologies</h4>
                         <div class="number">25</div>
                     </div>
                     <div class="stat-card">
-                        <h4>Data Points</h4>
-                        <div class="number">26,277</div>
+                        <h4>Campaign Samples</h4>
+                        <div class="number">10</div>
                     </div>
                     <div class="stat-card">
                         <h4>Countries</h4>
-                        <div class="number">15</div>
+                        <div class="number">4</div>
                     </div>
                 </div>
 
@@ -62,13 +62,13 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div onclick="showView('micro')" style="cursor: pointer; padding: 20px; border: 2px solid #007bff; border-radius: 8px; text-align: center;">
                             <h4>Micro Campaigns</h4>
-                            <div class="number" style="color: #007bff;">2</div>
-                            <p>Small-scale monitoring</p>
+                            <div class="number" style="color: #007bff;">4</div>
+                            <p>Microplastic monitoring campaigns</p>
                         </div>
-                        <div onclick="showView('macro')" style="cursor: pointer; padding: 20px; border: 2px solid #28a745; border-radius: 8px; text-align: center;">
+                        <div onclick="showView('macro')" style="cursor: pointer; padding: 20px; border: 2px solid #6c757d; border-radius: 8px; text-align: center; opacity: 0.6;">
                             <h4>Macro Campaigns</h4>
-                            <div class="number" style="color: #28a745;">6</div>
-                            <p>Large-scale monitoring</p>
+                            <div class="number" style="color: #6c757d;">0</div>
+                            <p>Coming soon</p>
                         </div>
                     </div>
                 </div>
@@ -79,28 +79,48 @@
                 <div class="breadcrumb">
                     <a onclick="showView('overview')">Overview</a> > Micro Campaigns
                 </div>
-                <h2>Micro Campaigns (2)</h2>
+                <h2>Micro Campaigns (4)</h2>
 
                 <div class="section">
                     <div class="campaign-list">
-                        <div class="campaign-item" onclick="showCampaignDetail('micro1')">
-                            <h4>Baltic Sea Microplastic Survey</h4>
-                            <div class="meta">Detection | <span class="status-active">Active</span> | Estonia, Latvia, Lithuania | 2024-2025</div>
-                            <p>Monitoring microplastics in Baltic coastal waters using advanced filtration techniques and citizen engagement.</p>
+                        <div class="campaign-item" onclick="showCampaignDetail(1)">
+                            <h4>Drava River Microplastic Survey</h4>
+                            <div class="meta">CAMP-SI-2024-001 | <span class="status-active">Active</span> | Slovenia | 2024</div>
+                            <p>Comprehensive study of microplastic distribution in Drava River, focusing on seasonal variations and pollution sources.</p>
                             <div class="tech-tags">
                                 <span class="tech-tag">Manta Net</span>
-                                <span class="tech-tag">Marine LitterWatch App</span>
-                                <span class="tech-tag">Citizen Engagement</span>
+                                <span class="tech-tag">5 Sampling Stations</span>
+                                <span class="tech-tag">Institute of Oceanography - Slovenia</span>
                             </div>
                         </div>
-                        <div class="campaign-item" onclick="showCampaignDetail('micro2')">
-                            <h4>Mediterranean Beach Microlitter</h4>
-                            <div class="meta">Collection | <span class="status-active">Active</span> | Italy, Spain, France | 2024-2026</div>
-                            <p>Systematic collection and analysis of microlitter on Mediterranean beaches using specialized filtration systems.</p>
+                        <div class="campaign-item" onclick="showCampaignDetail(2)">
+                            <h4>Po River Delta Microlitter Study</h4>
+                            <div class="meta">CAMP-IT-2024-002 | <span class="status-active">Active</span> | Italy | 2024-2025</div>
+                            <p>Systematic collection and analysis of microlitter in Po River Delta using specialized filtration systems.</p>
                             <div class="tech-tags">
                                 <span class="tech-tag">Clera Filtration Unit</span>
+                                <span class="tech-tag">8 Sampling Stations</span>
+                                <span class="tech-tag">ENEA - Italian National Agency</span>
+                            </div>
+                        </div>
+                        <div class="campaign-item" onclick="showCampaignDetail(3)">
+                            <h4>Douro Estuary Microplastic Assessment</h4>
+                            <div class="meta">CAMP-PT-2024-003 | <span class="status-active">Active</span> | Portugal | 2024-2025</div>
+                            <p>Assessment of microplastic distribution and transport in the Douro River estuary.</p>
+                            <div class="tech-tags">
                                 <span class="tech-tag">Ferrybox Sampling</span>
-                                <span class="tech-tag">Drone Observations</span>
+                                <span class="tech-tag">6 Sampling Stations</span>
+                                <span class="tech-tag">University of Porto</span>
+                            </div>
+                        </div>
+                        <div class="campaign-item" onclick="showCampaignDetail(4)">
+                            <h4>Danube River Vienna Urban Assessment</h4>
+                            <div class="meta">CAMP-AT-2024-004 | <span class="status-active">Active</span> | Austria | 2024-2025</div>
+                            <p>Monitoring of microplastic pollution in Danube River near Vienna, assessing urban impact.</p>
+                            <div class="tech-tags">
+                                <span class="tech-tag">Manta Net</span>
+                                <span class="tech-tag">7 Sampling Stations</span>
+                                <span class="tech-tag">University of Vienna</span>
                             </div>
                         </div>
                     </div>
@@ -112,69 +132,13 @@
                 <div class="breadcrumb">
                     <a onclick="showView('overview')">Overview</a> > Macro Campaigns
                 </div>
-                <h2>Macro Campaigns (6)</h2>
+                <h2>Macro Campaigns</h2>
 
                 <div class="section">
-                    <div class="campaign-list">
-                        <div class="campaign-item" onclick="showCampaignDetail('macro1')">
-                            <h4>North Sea Floating Debris</h4>
-                            <div class="meta">Detection | <span class="status-active">Active</span> | Netherlands, Germany, Denmark | 2023-2025</div>
-                            <p>Large-scale monitoring of floating debris in North Sea shipping routes using mounted cameras and sensor networks.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">Mounted Camera</span>
-                                <span class="tech-tag">JRC Floating Litter App</span>
-                                <span class="tech-tag">Sensor Black Box</span>
-                            </div>
-                        </div>
-                        <div class="campaign-item" onclick="showCampaignDetail('macro2')">
-                            <h4>Atlantic Coastal Cleanup</h4>
-                            <div class="meta">Collection | <span class="status-active">Active</span> | Portugal, Ireland, UK | 2024-2025</div>
-                            <p>Coordinated cleanup efforts using innovative collection systems and community engagement programs.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">Clean Trash Collection Cage</span>
-                                <span class="tech-tag">Fish Friendly Trawling Net</span>
-                                <span class="tech-tag">Citizen Engagement</span>
-                            </div>
-                        </div>
-                        <div class="campaign-item" onclick="showCampaignDetail('macro3')">
-                            <h4>River Litter Prevention</h4>
-                            <div class="meta">Prevention | <span class="status-planning">Planning</span> | Germany, Austria, Czech Republic | 2025-2027</div>
-                            <p>Prevention strategies for major European river systems using advanced filtration and coating technologies.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">Super-TW-Net Filter</span>
-                                <span class="tech-tag">EcoPlex Remover</span>
-                                <span class="tech-tag">Food Coating</span>
-                            </div>
-                        </div>
-                        <div class="campaign-item" onclick="showCampaignDetail('macro4')">
-                            <h4>Urban Waterway Monitoring</h4>
-                            <div class="meta">Detection | <span class="status-active">Active</span> | Multiple Cities | 2024-2026</div>
-                            <p>Monitoring litter in urban waterways across 12 European cities using drone technology and water sensors.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">Drone Observations</span>
-                                <span class="tech-tag">Infordata Water Sensor</span>
-                                <span class="tech-tag">CirCleaner</span>
-                            </div>
-                        </div>
-                        <div class="campaign-item" onclick="showCampaignDetail('macro5')">
-                            <h4>Fisheries Bycatch Study</h4>
-                            <div class="meta">Collection | <span class="status-active">Active</span> | North Atlantic | 2023-2025</div>
-                            <p>Analysis of litter collected as fisheries bycatch using specialized trawling equipment.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">Fish Friendly Trawling Net</span>
-                                <span class="tech-tag">Archimedean Drum Screw</span>
-                            </div>
-                        </div>
-                        <div class="campaign-item" onclick="showCampaignDetail('macro6')">
-                            <h4>Beach Monitoring Network</h4>
-                            <div class="meta">Detection | <span class="status-active">Active</span> | 45 Locations | 2022-2025</div>
-                            <p>Standardized beach monitoring across 45 European locations using citizen science and mobile apps.</p>
-                            <div class="tech-tags">
-                                <span class="tech-tag">Marine LitterWatch App</span>
-                                <span class="tech-tag">Citizen Engagement</span>
-                                <span class="tech-tag">Mounted Camera</span>
-                            </div>
-                        </div>
+                    <div style="text-align: center; padding: 40px; color: #666; background: #f8f9fa; border-radius: 8px;">
+                        <h3 style="color: #333; margin-bottom: 10px;">Coming Soon</h3>
+                        <p>Macro litter campaigns are currently in planning phase.</p>
+                        <p style="font-size: 14px; margin-top: 15px;">Currently showing <strong>4 active micro campaigns</strong> with sample data available.</p>
                     </div>
                 </div>
             </div>
