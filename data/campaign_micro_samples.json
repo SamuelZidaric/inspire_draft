@@ -43,8 +43,7 @@
     "compartment_type": 1,
     "sampling_instrument": "Manta Net 333µm",
     "sampling_instrument_group": "Neuston Net",
-    "sampling_time_reference": "UTC+1",
-    "location_id": 1
+    "sampling_time_reference": "UTC+1"
   },
   {
     "id": 2,
@@ -90,8 +89,7 @@
     "compartment_type": 1,
     "sampling_instrument": "Bongo Net 300µm",
     "sampling_instrument_group": "Neuston Net",
-    "sampling_time_reference": "UTC+1",
-    "location_id": 2
+    "sampling_time_reference": "UTC+1"
   },
   {
     "id": 3,
@@ -137,8 +135,7 @@
     "compartment_type": 2,
     "sampling_instrument": "Submersible Pump GP-5000",
     "sampling_instrument_group": "Pump System",
-    "sampling_time_reference": "UTC",
-    "location_id": 3
+    "sampling_time_reference": "UTC"
   },
   {
     "id": 4,
@@ -184,8 +181,7 @@
     "compartment_type": 1,
     "sampling_instrument": "Manta Net 333µm",
     "sampling_instrument_group": "Neuston Net",
-    "sampling_time_reference": "UTC+1",
-    "location_id": 4
+    "sampling_time_reference": "UTC+1"
   },
   {
     "id": 5,
@@ -231,8 +227,7 @@
     "compartment_type": 1,
     "sampling_instrument": "CF Centrifuge CFC-100",
     "sampling_instrument_group": "Centrifuge System",
-    "sampling_time_reference": "UTC+1",
-    "location_id": 1
+    "sampling_time_reference": "UTC+1"
   },
   {
     "id": 6,
@@ -278,7 +273,6 @@
     "compartment_type": 1,
     "sampling_instrument": "Bongo Net 300µm",
     "sampling_instrument_group": "Neuston Net",
-    "sampling_time_reference": "UTC+1",
-    "location_id": 2
+    "sampling_time_reference": "UTC+1"
   }
 ]
