@@ -529,6 +529,508 @@ const campaignData = {
     }
 };
 
+// Sampling Data Tables
+const campaignMicroSampleData = [
+    {
+        id: 1,
+        campaign_id: 1,
+        sample_code: "MS-2024-001",
+        sampling_date_start: "2024-03-15T09:30:00",
+        sampling_date_end: "2024-03-15T11:45:00",
+        sampling_latitude_start: 46.13730000,
+        sampling_longitude_start: 14.59610000,
+        sampling_latitude_end: 46.14120000,
+        sampling_longitude_end: 14.60210000,
+        survey_length: "2.5 km",
+        survey_width: "50 m",
+        sampling_protocol_reference: "ISO 17294-2:2016",
+        flowmeter_model: "Hydrobios FlowMeter 438115",
+        flowmeter_equation: "V = (N × k) / 999999",
+        flowmeter_start_count: "123456",
+        flowmeter_end_count: "167892",
+        particles_total_count: "3847",
+        particles_total_weight: "12.5 g",
+        particles_total_concentration: "2.3 particles/m³",
+        tire_marker_concentration: 0.45,
+        tire_wear_concentration: 1.87,
+        tire_wear_concentration_volume: 0.94,
+        notes: "Clear weather conditions, moderate flow rate. Sampling conducted during peak runoff period.",
+        user_id: 101,
+        created_at: "2024-03-15T12:00:00",
+        updated_at: "2024-03-15T12:00:00",
+        active: 1,
+        deleted: 0,
+        sampling_method: "Manta Net Trawling",
+        technology_id: 1,
+        data_type: "Sampling",
+        spatial_or_temporal_monitoring: "Spatiotemporal",
+        sampling_duration_hours: "2.25",
+        station_id: "ST-DOM-01",
+        total_samples: "5",
+        replicate_count: "3",
+        quality_control_id: 1,
+        lab_analysis_id: 1,
+        tire_wear_leachable_total_concentration: 0.78,
+        quadrant_placement: 1.00,
+        compartment_type: 1,
+        sampling_instrument: "Manta Net 333µm",
+        sampling_instrument_group: "Neuston Net",
+        sampling_time_reference: "UTC+1",
+        location_id: 1
+    },
+    {
+        id: 2,
+        campaign_id: 1,
+        sample_code: "MS-2024-002",
+        sampling_date_start: "2024-03-22T10:15:00",
+        sampling_date_end: "2024-03-22T12:30:00",
+        sampling_latitude_start: 45.03480000,
+        sampling_longitude_start: 12.17340000,
+        sampling_latitude_end: 45.04120000,
+        sampling_longitude_end: 12.18560000,
+        survey_length: "3.1 km",
+        survey_width: "45 m",
+        sampling_protocol_reference: "ISO 17294-2:2016",
+        flowmeter_model: "General Oceanics 2030R",
+        flowmeter_equation: "V = N × 0.3",
+        flowmeter_start_count: "89234",
+        flowmeter_end_count: "134567",
+        particles_total_count: "5123",
+        particles_total_weight: "18.7 g",
+        particles_total_concentration: "3.1 particles/m³",
+        tire_marker_concentration: 0.62,
+        tire_wear_concentration: 2.34,
+        tire_wear_concentration_volume: 1.12,
+        notes: "Heavy precipitation 24h prior. Increased turbidity observed during sampling.",
+        user_id: 102,
+        created_at: "2024-03-22T13:15:00",
+        updated_at: "2024-03-22T13:15:00",
+        active: 1,
+        deleted: 0,
+        sampling_method: "Plankton Net Surface Tow",
+        technology_id: 2,
+        data_type: "Sampling",
+        spatial_or_temporal_monitoring: "Spatial",
+        sampling_duration_hours: "2.25",
+        station_id: "ST-POG-01",
+        total_samples: "4",
+        replicate_count: "2",
+        quality_control_id: 2,
+        lab_analysis_id: 2,
+        tire_wear_leachable_total_concentration: 1.05,
+        quadrant_placement: 2.00,
+        compartment_type: 1,
+        sampling_instrument: "Bongo Net 300µm",
+        sampling_instrument_group: "Neuston Net",
+        sampling_time_reference: "UTC+1",
+        location_id: 2
+    },
+    {
+        id: 3,
+        campaign_id: 2,
+        sample_code: "MS-2024-003",
+        sampling_date_start: "2024-04-05T08:00:00",
+        sampling_date_end: "2024-04-05T10:45:00",
+        sampling_latitude_start: 41.15790000,
+        sampling_longitude_start: -8.62910000,
+        sampling_latitude_end: 41.16450000,
+        sampling_longitude_end: -8.61230000,
+        survey_length: "1.8 km",
+        survey_width: "60 m",
+        sampling_protocol_reference: "EN ISO 16665:2014",
+        flowmeter_model: "KC Denmark A/S",
+        flowmeter_equation: "V = (N - N0) × k",
+        flowmeter_start_count: "234567",
+        flowmeter_end_count: "267890",
+        particles_total_count: "2987",
+        particles_total_weight: "9.3 g",
+        particles_total_concentration: "1.8 particles/m³",
+        tire_marker_concentration: 0.38,
+        tire_wear_concentration: 1.52,
+        tire_wear_concentration_volume: 0.76,
+        notes: "Morning sampling session. Low wind conditions, excellent visibility.",
+        user_id: 103,
+        created_at: "2024-04-05T11:30:00",
+        updated_at: "2024-04-05T11:30:00",
+        active: 1,
+        deleted: 0,
+        sampling_method: "Subsurface Pump Filtration",
+        technology_id: 3,
+        data_type: "Station",
+        spatial_or_temporal_monitoring: "Temporal",
+        sampling_duration_hours: "2.75",
+        station_id: "ST-DOU-01",
+        total_samples: "6",
+        replicate_count: "3",
+        quality_control_id: 3,
+        lab_analysis_id: 3,
+        tire_wear_leachable_total_concentration: 0.64,
+        quadrant_placement: 1.00,
+        compartment_type: 2,
+        sampling_instrument: "Submersible Pump GP-5000",
+        sampling_instrument_group: "Pump System",
+        sampling_time_reference: "UTC",
+        location_id: 3
+    },
+    {
+        id: 4,
+        campaign_id: 2,
+        sample_code: "MS-2024-004",
+        sampling_date_start: "2024-04-12T14:30:00",
+        sampling_date_end: "2024-04-12T16:15:00",
+        sampling_latitude_start: 48.20820000,
+        sampling_longitude_start: 16.37380000,
+        sampling_latitude_end: 48.21450000,
+        sampling_longitude_end: 16.38910000,
+        survey_length: "2.2 km",
+        survey_width: "55 m",
+        sampling_protocol_reference: "ASTM D6913-04",
+        flowmeter_model: "Valeport Model 801",
+        flowmeter_equation: "V = N × C",
+        flowmeter_start_count: "345678",
+        flowmeter_end_count: "389012",
+        particles_total_count: "4256",
+        particles_total_weight: "15.2 g",
+        particles_total_concentration: "2.7 particles/m³",
+        tire_marker_concentration: 0.53,
+        tire_wear_concentration: 2.08,
+        tire_wear_concentration_volume: 1.04,
+        notes: "Afternoon sampling. River discharge higher than seasonal average.",
+        user_id: 104,
+        created_at: "2024-04-12T17:00:00",
+        updated_at: "2024-04-12T17:00:00",
+        active: 1,
+        deleted: 0,
+        sampling_method: "Manta Net Trawling",
+        technology_id: 1,
+        data_type: "Sampling",
+        spatial_or_temporal_monitoring: "Spatiotemporal",
+        sampling_duration_hours: "1.75",
+        station_id: "ST-DAN-01",
+        total_samples: "5",
+        replicate_count: "2",
+        quality_control_id: 4,
+        lab_analysis_id: 4,
+        tire_wear_leachable_total_concentration: 0.89,
+        quadrant_placement: 3.00,
+        compartment_type: 1,
+        sampling_instrument: "Manta Net 333µm",
+        sampling_instrument_group: "Neuston Net",
+        sampling_time_reference: "UTC+1",
+        location_id: 4
+    },
+    {
+        id: 5,
+        campaign_id: 1,
+        sample_code: "MS-2024-005",
+        sampling_date_start: "2024-04-20T11:00:00",
+        sampling_date_end: "2024-04-20T13:30:00",
+        sampling_latitude_start: 46.14000000,
+        sampling_longitude_start: 14.60000000,
+        sampling_latitude_end: 46.14680000,
+        sampling_longitude_end: 14.60890000,
+        survey_length: "2.8 km",
+        survey_width: "48 m",
+        sampling_protocol_reference: "ISO 17294-2:2016",
+        flowmeter_model: "Hydrobios FlowMeter 438115",
+        flowmeter_equation: "V = (N × k) / 999999",
+        flowmeter_start_count: "456789",
+        flowmeter_end_count: "498765",
+        particles_total_count: "3564",
+        particles_total_weight: "11.8 g",
+        particles_total_concentration: "2.1 particles/m³",
+        tire_marker_concentration: 0.41,
+        tire_wear_concentration: 1.76,
+        tire_wear_concentration_volume: 0.88,
+        notes: "Routine monitoring. Standard conditions, no anomalies detected.",
+        user_id: 101,
+        created_at: "2024-04-20T14:15:00",
+        updated_at: "2024-04-20T14:15:00",
+        active: 1,
+        deleted: 0,
+        sampling_method: "Continuous Flow Centrifugation",
+        technology_id: 4,
+        data_type: "Replica",
+        spatial_or_temporal_monitoring: "Temporal",
+        sampling_duration_hours: "2.5",
+        station_id: "ST-DOM-01",
+        total_samples: "7",
+        replicate_count: "4",
+        quality_control_id: 5,
+        lab_analysis_id: 5,
+        tire_wear_leachable_total_concentration: 0.72,
+        quadrant_placement: 1.00,
+        compartment_type: 1,
+        sampling_instrument: "CF Centrifuge CFC-100",
+        sampling_instrument_group: "Centrifuge System",
+        sampling_time_reference: "UTC+1",
+        location_id: 1
+    },
+    {
+        id: 6,
+        campaign_id: 2,
+        sample_code: "MS-2024-006",
+        sampling_date_start: "2024-05-03T09:45:00",
+        sampling_date_end: "2024-05-03T12:00:00",
+        sampling_latitude_start: 45.04000000,
+        sampling_longitude_start: 12.18000000,
+        sampling_latitude_end: 45.04890000,
+        sampling_longitude_end: 12.19450000,
+        survey_length: "3.4 km",
+        survey_width: "52 m",
+        sampling_protocol_reference: "EN ISO 16665:2014",
+        flowmeter_model: "General Oceanics 2030R",
+        flowmeter_equation: "V = N × 0.3",
+        flowmeter_start_count: "567890",
+        flowmeter_end_count: "612345",
+        particles_total_count: "5678",
+        particles_total_weight: "21.3 g",
+        particles_total_concentration: "3.4 particles/m³",
+        tire_marker_concentration: 0.71,
+        tire_wear_concentration: 2.56,
+        tire_wear_concentration_volume: 1.28,
+        notes: "Post-storm sampling. Elevated particle concentrations observed.",
+        user_id: 102,
+        created_at: "2024-05-03T13:00:00",
+        updated_at: "2024-05-03T13:00:00",
+        active: 1,
+        deleted: 0,
+        sampling_method: "Plankton Net Surface Tow",
+        technology_id: 2,
+        data_type: "Study",
+        spatial_or_temporal_monitoring: "Spatial",
+        sampling_duration_hours: "2.25",
+        station_id: "ST-POG-02",
+        total_samples: "5",
+        replicate_count: "3",
+        quality_control_id: 6,
+        lab_analysis_id: 6,
+        tire_wear_leachable_total_concentration: 1.15,
+        quadrant_placement: 2.00,
+        compartment_type: 1,
+        sampling_instrument: "Bongo Net 300µm",
+        sampling_instrument_group: "Neuston Net",
+        sampling_time_reference: "UTC+1",
+        location_id: 2
+    }
+];
+
+const labAnalysisData = [
+    {
+        id: 1,
+        campaign_micro_sample_id: 1,
+        digestion_y_n: "Yes",
+        digestion_solution: "H2O2 30% + Fe(II)",
+        digestion_temperature_c: "65",
+        digestion_time_h: "24",
+        recovery_solution: "NaCl saturated",
+        density_solution_g_cm3: "1.2",
+        recovery_particles: "95%",
+        polymer_identification: "FTIR Spectroscopy",
+        pi_compartment: "PE",
+        pi_percentage: "45.2",
+        pi_number_particles: "1738",
+        fibers: "892",
+        active: 1,
+        deleted: 0,
+        created_at: "2024-03-16T10:00:00",
+        updated_at: "2024-03-16T10:00:00",
+        pi_instrument: "Perkin Elmer Spectrum Two",
+        pi_method_technique: "ATR-FTIR"
+    },
+    {
+        id: 2,
+        campaign_micro_sample_id: 2,
+        digestion_y_n: "Yes",
+        digestion_solution: "H2O2 30%",
+        digestion_temperature_c: "60",
+        digestion_time_h: "48",
+        recovery_solution: "ZnCl2 1.6 g/cm³",
+        density_solution_g_cm3: "1.6",
+        recovery_particles: "92%",
+        polymer_identification: "Raman Spectroscopy",
+        pi_compartment: "PP",
+        pi_percentage: "38.7",
+        pi_number_particles: "1983",
+        fibers: "1245",
+        active: 1,
+        deleted: 0,
+        created_at: "2024-03-23T09:30:00",
+        updated_at: "2024-03-23T09:30:00",
+        pi_instrument: "Horiba XploRA PLUS",
+        pi_method_technique: "Confocal Raman"
+    },
+    {
+        id: 3,
+        campaign_micro_sample_id: 3,
+        digestion_y_n: "Yes",
+        digestion_solution: "KOH 10%",
+        digestion_temperature_c: "70",
+        digestion_time_h: "36",
+        recovery_solution: "NaI 1.8 g/cm³",
+        density_solution_g_cm3: "1.8",
+        recovery_particles: "97%",
+        polymer_identification: "Py-GC/MS",
+        pi_compartment: "PS",
+        pi_percentage: "28.5",
+        pi_number_particles: "851",
+        fibers: "623",
+        active: 1,
+        deleted: 0,
+        created_at: "2024-04-06T14:00:00",
+        updated_at: "2024-04-06T14:00:00",
+        pi_instrument: "Agilent 7890B GC/5977B MSD",
+        pi_method_technique: "Pyrolysis GC-MS"
+    },
+    {
+        id: 4,
+        campaign_micro_sample_id: 4,
+        digestion_y_n: "No",
+        digestion_solution: "N/A",
+        digestion_temperature_c: "N/A",
+        digestion_time_h: "N/A",
+        recovery_solution: "NaCl saturated",
+        density_solution_g_cm3: "1.2",
+        recovery_particles: "89%",
+        polymer_identification: "Visual + FTIR",
+        pi_compartment: "PET",
+        pi_percentage: "52.3",
+        pi_number_particles: "2226",
+        fibers: "1534",
+        active: 1,
+        deleted: 0,
+        created_at: "2024-04-13T11:00:00",
+        updated_at: "2024-04-13T11:00:00",
+        pi_instrument: "Bruker ALPHA II",
+        pi_method_technique: "ATR-FTIR"
+    },
+    {
+        id: 5,
+        campaign_micro_sample_id: 5,
+        digestion_y_n: "Yes",
+        digestion_solution: "H2O2 35% + Fe(II)",
+        digestion_temperature_c: "68",
+        digestion_time_h: "30",
+        recovery_solution: "ZnCl2 1.7 g/cm³",
+        density_solution_g_cm3: "1.7",
+        recovery_particles: "94%",
+        polymer_identification: "FTIR Spectroscopy",
+        pi_compartment: "PE",
+        pi_percentage: "41.8",
+        pi_number_particles: "1490",
+        fibers: "785",
+        active: 1,
+        deleted: 0,
+        created_at: "2024-04-21T10:30:00",
+        updated_at: "2024-04-21T10:30:00",
+        pi_instrument: "Thermo Scientific Nicolet iS50",
+        pi_method_technique: "Micro-FTIR Imaging"
+    },
+    {
+        id: 6,
+        campaign_micro_sample_id: 6,
+        digestion_y_n: "Yes",
+        digestion_solution: "HNO3 65% + HCl 37%",
+        digestion_temperature_c: "75",
+        digestion_time_h: "24",
+        recovery_solution: "NaI 1.8 g/cm³",
+        density_solution_g_cm3: "1.8",
+        recovery_particles: "96%",
+        polymer_identification: "Raman + FTIR",
+        pi_compartment: "Mixed",
+        pi_percentage: "35.6",
+        pi_number_particles: "2021",
+        fibers: "1456",
+        active: 1,
+        deleted: 0,
+        created_at: "2024-05-04T15:00:00",
+        updated_at: "2024-05-04T15:00:00",
+        pi_instrument: "WITec alpha300 R",
+        pi_method_technique: "Combined Raman-FTIR"
+    }
+];
+
+const qualityControlData = [
+    {
+        id: 1,
+        campaign_micro_sample_id: 1,
+        blanks: 3,
+        control: 2,
+        blanck_pi: 2.50,
+        control_pi: 95.80,
+        data_correction: 1,
+        active: 1,
+        deleted: 0,
+        created_at: "2024-03-16T10:00:00",
+        updated_at: "2024-03-16T10:00:00"
+    },
+    {
+        id: 2,
+        campaign_micro_sample_id: 2,
+        blanks: 4,
+        control: 3,
+        blanck_pi: 3.10,
+        control_pi: 94.20,
+        data_correction: 1,
+        active: 1,
+        deleted: 0,
+        created_at: "2024-03-23T09:30:00",
+        updated_at: "2024-03-23T09:30:00"
+    },
+    {
+        id: 3,
+        campaign_micro_sample_id: 3,
+        blanks: 2,
+        control: 2,
+        blanck_pi: 1.80,
+        control_pi: 97.50,
+        data_correction: 1,
+        active: 1,
+        deleted: 0,
+        created_at: "2024-04-06T14:00:00",
+        updated_at: "2024-04-06T14:00:00"
+    },
+    {
+        id: 4,
+        campaign_micro_sample_id: 4,
+        blanks: 3,
+        control: 2,
+        blanck_pi: 2.90,
+        control_pi: 93.40,
+        data_correction: 1,
+        active: 1,
+        deleted: 0,
+        created_at: "2024-04-13T11:00:00",
+        updated_at: "2024-04-13T11:00:00"
+    },
+    {
+        id: 5,
+        campaign_micro_sample_id: 5,
+        blanks: 4,
+        control: 3,
+        blanck_pi: 2.20,
+        control_pi: 96.10,
+        data_correction: 1,
+        active: 1,
+        deleted: 0,
+        created_at: "2024-04-21T10:30:00",
+        updated_at: "2024-04-21T10:30:00"
+    },
+    {
+        id: 6,
+        campaign_micro_sample_id: 6,
+        blanks: 3,
+        control: 2,
+        blanck_pi: 3.50,
+        control_pi: 92.80,
+        data_correction: 1,
+        active: 1,
+        deleted: 0,
+        created_at: "2024-05-04T15:00:00",
+        updated_at: "2024-05-04T15:00:00"
+    }
+];
+
 function toggleDropdown(event) {
     event.stopPropagation();
     const dropdownItem = event.currentTarget;
@@ -970,4 +1472,330 @@ document.addEventListener('click', function(event) {
             item.querySelector('.submenu').classList.remove('open');
         });
     }
+});
+
+// Sampling Data Functions
+let currentFilteredSamples = [...campaignMicroSampleData];
+
+function formatDateTime(dateTimeString) {
+    const date = new Date(dateTimeString);
+    return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function formatCoordinate(lat, lon) {
+    const latDir = lat >= 0 ? 'N' : 'S';
+    const lonDir = lon >= 0 ? 'E' : 'W';
+    return `${Math.abs(lat).toFixed(4)}° ${latDir}, ${Math.abs(lon).toFixed(4)}° ${lonDir}`;
+}
+
+function renderSamplingData(samples = campaignMicroSampleData) {
+    const container = document.getElementById('sampling-samples-container');
+    if (!container) return;
+
+    currentFilteredSamples = samples;
+
+    if (samples.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <h4>No samples found</h4>
+                <p>Try adjusting your filters</p>
+            </div>
+        `;
+        document.getElementById('sample-count-display').textContent = 'Showing 0 of 0 samples';
+        return;
+    }
+
+    const html = samples.map(sample => {
+        const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === sample.id);
+        const qc = qualityControlData.find(q => q.campaign_micro_sample_id === sample.id);
+
+        return `
+            <div class="campaign-item" style="cursor: pointer; transition: all 0.3s ease;" onclick="showSampleDetail(${sample.id})">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                    <div>
+                        <h4 style="margin: 0 0 5px 0; color: #007bff;">${sample.sample_code}</h4>
+                        <div class="meta">
+                            Campaign ${sample.campaign_id} |
+                            <span class="status-active">${sample.data_type}</span> |
+                            ${sample.station_id} |
+                            ${formatDateTime(sample.sampling_date_start)}
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 24px; font-weight: 600; color: #28a745;">${sample.particles_total_concentration}</div>
+                        <div style="font-size: 12px; color: #666;">concentration</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 15px 0;">
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Sampling Method</div>
+                        <div style="font-weight: 600; font-size: 14px;">${sample.sampling_method}</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Survey Area</div>
+                        <div style="font-weight: 600; font-size: 14px;">${sample.survey_length} × ${sample.survey_width}</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Total Particles</div>
+                        <div style="font-weight: 600; font-size: 14px;">${sample.particles_total_count}</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Tire Wear Conc.</div>
+                        <div style="font-weight: 600; font-size: 14px;">${sample.tire_wear_concentration} µg/L</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                    <div>
+                        <div style="font-size: 12px; color: #666;">Start: ${formatCoordinate(sample.sampling_latitude_start, sample.sampling_longitude_start)}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #666;">End: ${formatCoordinate(sample.sampling_latitude_end, sample.sampling_longitude_end)}</div>
+                    </div>
+                </div>
+
+                ${sample.notes ? `
+                    <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-left: 3px solid #ffc107; border-radius: 4px; font-size: 13px;">
+                        <strong>Notes:</strong> ${sample.notes}
+                    </div>
+                ` : ''}
+
+                <div style="margin-top: 12px; display: flex; gap: 10px;">
+                    ${labAnalysis ? `<span class="tech-tag" style="background: #28a745;">Lab Analysis Available</span>` : ''}
+                    ${qc ? `<span class="tech-tag" style="background: #17a2b8;">QC: ${qc.control_pi}% Control</span>` : ''}
+                    <span class="tech-tag">${sample.spatial_or_temporal_monitoring}</span>
+                    <span class="tech-tag">Replicates: ${sample.replicate_count}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = html;
+    document.getElementById('sample-count-display').textContent =
+        `Showing ${samples.length} of ${campaignMicroSampleData.length} samples`;
+}
+
+function filterSamplingData() {
+    const campaignFilter = document.getElementById('filter-campaign').value;
+    const methodFilter = document.getElementById('filter-method').value;
+    const datatypeFilter = document.getElementById('filter-datatype').value;
+
+    let filtered = campaignMicroSampleData.filter(sample => {
+        const matchesCampaign = !campaignFilter || sample.campaign_id.toString() === campaignFilter;
+        const matchesMethod = !methodFilter || sample.sampling_method === methodFilter;
+        const matchesDatatype = !datatypeFilter || sample.data_type === datatypeFilter;
+
+        return matchesCampaign && matchesMethod && matchesDatatype;
+    });
+
+    renderSamplingData(filtered);
+}
+
+function resetFilters() {
+    document.getElementById('filter-campaign').value = '';
+    document.getElementById('filter-method').value = '';
+    document.getElementById('filter-datatype').value = '';
+    renderSamplingData(campaignMicroSampleData);
+}
+
+function showSampleDetail(sampleId) {
+    const sample = campaignMicroSampleData.find(s => s.id === sampleId);
+    if (!sample) return;
+
+    const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === sampleId);
+    const qc = qualityControlData.find(q => q.campaign_micro_sample_id === sampleId);
+
+    const content = `
+        <div class="breadcrumb">
+            <a onclick="showView('overview')">Overview</a> >
+            <a onclick="showView('sampling-data')">Sampling Data</a> >
+            ${sample.sample_code}
+        </div>
+        <h2>${sample.sample_code} - Detailed View</h2>
+
+        <!-- Key Metrics -->
+        <div class="stats">
+            <div class="stat-card">
+                <h4>Total Particles</h4>
+                <div class="number">${sample.particles_total_count}</div>
+            </div>
+            <div class="stat-card">
+                <h4>Concentration</h4>
+                <div class="number">${sample.particles_total_concentration}</div>
+            </div>
+            <div class="stat-card">
+                <h4>Total Weight</h4>
+                <div class="number">${sample.particles_total_weight}</div>
+            </div>
+            <div class="stat-card">
+                <h4>Duration</h4>
+                <div class="number">${sample.sampling_duration_hours}</div>
+                <small>hours</small>
+            </div>
+        </div>
+
+        <!-- Sample Information -->
+        <div class="section">
+            <h3>Sample Information</h3>
+            <table class="data-table">
+                <tr><td><strong>Sample Code</strong></td><td>${sample.sample_code}</td></tr>
+                <tr><td><strong>Campaign ID</strong></td><td>${sample.campaign_id}</td></tr>
+                <tr><td><strong>Station ID</strong></td><td>${sample.station_id}</td></tr>
+                <tr><td><strong>Data Type</strong></td><td><span class="status-active">${sample.data_type}</span></td></tr>
+                <tr><td><strong>Monitoring Type</strong></td><td>${sample.spatial_or_temporal_monitoring}</td></tr>
+                <tr><td><strong>Sampling Method</strong></td><td>${sample.sampling_method}</td></tr>
+                <tr><td><strong>Sampling Instrument</strong></td><td>${sample.sampling_instrument} (${sample.sampling_instrument_group})</td></tr>
+                <tr><td><strong>Protocol Reference</strong></td><td>${sample.sampling_protocol_reference}</td></tr>
+            </table>
+        </div>
+
+        <!-- Temporal & Spatial Data -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="section">
+                <h3>Temporal Data</h3>
+                <table class="data-table">
+                    <tr><td><strong>Start Time</strong></td><td>${formatDateTime(sample.sampling_date_start)}</td></tr>
+                    <tr><td><strong>End Time</strong></td><td>${formatDateTime(sample.sampling_date_end)}</td></tr>
+                    <tr><td><strong>Duration</strong></td><td>${sample.sampling_duration_hours} hours</td></tr>
+                    <tr><td><strong>Time Reference</strong></td><td>${sample.sampling_time_reference}</td></tr>
+                </table>
+            </div>
+
+            <div class="section">
+                <h3>Spatial Data</h3>
+                <table class="data-table">
+                    <tr><td><strong>Start Position</strong></td><td>${formatCoordinate(sample.sampling_latitude_start, sample.sampling_longitude_start)}</td></tr>
+                    <tr><td><strong>End Position</strong></td><td>${formatCoordinate(sample.sampling_latitude_end, sample.sampling_longitude_end)}</td></tr>
+                    <tr><td><strong>Survey Length</strong></td><td>${sample.survey_length}</td></tr>
+                    <tr><td><strong>Survey Width</strong></td><td>${sample.survey_width}</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Flowmeter Data -->
+        <div class="section">
+            <h3>Flowmeter & Equipment</h3>
+            <table class="data-table">
+                <tr><td><strong>Flowmeter Model</strong></td><td>${sample.flowmeter_model}</td></tr>
+                <tr><td><strong>Flowmeter Equation</strong></td><td><code>${sample.flowmeter_equation}</code></td></tr>
+                <tr><td><strong>Start Count</strong></td><td>${sample.flowmeter_start_count}</td></tr>
+                <tr><td><strong>End Count</strong></td><td>${sample.flowmeter_end_count}</td></tr>
+            </table>
+        </div>
+
+        <!-- Particle Analysis Results -->
+        <div class="section">
+            <h3>Particle Analysis Results</h3>
+            <table class="data-table">
+                <tr><td><strong>Total Particle Count</strong></td><td>${sample.particles_total_count}</td></tr>
+                <tr><td><strong>Total Weight</strong></td><td>${sample.particles_total_weight}</td></tr>
+                <tr><td><strong>Total Concentration</strong></td><td>${sample.particles_total_concentration}</td></tr>
+                <tr><td><strong>Tire Marker Concentration</strong></td><td>${sample.tire_marker_concentration} µg/L</td></tr>
+                <tr><td><strong>Tire Wear Concentration</strong></td><td>${sample.tire_wear_concentration} µg/L</td></tr>
+                <tr><td><strong>Tire Wear Conc. (Volume)</strong></td><td>${sample.tire_wear_concentration_volume} µg/L</td></tr>
+                <tr><td><strong>Tire Wear Leachable Total</strong></td><td>${sample.tire_wear_leachable_total_concentration} µg/L</td></tr>
+            </table>
+        </div>
+
+        <!-- Lab Analysis -->
+        ${labAnalysis ? `
+        <div class="section">
+            <h3>Laboratory Analysis</h3>
+            <table class="data-table">
+                <tr><td><strong>Analysis ID</strong></td><td>${labAnalysis.id}</td></tr>
+                <tr><td><strong>Digestion</strong></td><td>${labAnalysis.digestion_y_n}</td></tr>
+                ${labAnalysis.digestion_y_n === 'Yes' ? `
+                    <tr><td><strong>Digestion Solution</strong></td><td>${labAnalysis.digestion_solution}</td></tr>
+                    <tr><td><strong>Temperature</strong></td><td>${labAnalysis.digestion_temperature_c}°C</td></tr>
+                    <tr><td><strong>Time</strong></td><td>${labAnalysis.digestion_time_h} hours</td></tr>
+                ` : ''}
+                <tr><td><strong>Recovery Solution</strong></td><td>${labAnalysis.recovery_solution}</td></tr>
+                <tr><td><strong>Density Solution</strong></td><td>${labAnalysis.density_solution_g_cm3} g/cm³</td></tr>
+                <tr><td><strong>Recovery Particles</strong></td><td><span style="color: #28a745; font-weight: 600;">${labAnalysis.recovery_particles}</span></td></tr>
+            </table>
+
+            <h4 style="margin-top: 20px;">Polymer Identification</h4>
+            <table class="data-table">
+                <tr><td><strong>PI Method</strong></td><td>${labAnalysis.polymer_identification}</td></tr>
+                <tr><td><strong>PI Instrument</strong></td><td>${labAnalysis.pi_instrument}</td></tr>
+                <tr><td><strong>PI Technique</strong></td><td>${labAnalysis.pi_method_technique}</td></tr>
+                <tr><td><strong>PI Compartment</strong></td><td><span class="tech-tag">${labAnalysis.pi_compartment}</span></td></tr>
+                <tr><td><strong>PI Percentage</strong></td><td>${labAnalysis.pi_percentage}%</td></tr>
+                <tr><td><strong>PI Number of Particles</strong></td><td>${labAnalysis.pi_number_particles}</td></tr>
+                <tr><td><strong>Fibers</strong></td><td>${labAnalysis.fibers}</td></tr>
+            </table>
+        </div>
+        ` : '<div class="section"><p style="color: #666;">No lab analysis data available for this sample.</p></div>'}
+
+        <!-- Quality Control -->
+        ${qc ? `
+        <div class="section">
+            <h3>Quality Control</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px; color: white;">
+                    <div style="font-size: 14px; margin-bottom: 5px;">Blanks</div>
+                    <div style="font-size: 32px; font-weight: 600;">${qc.blanks}</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Blank PI: ${qc.blanck_pi}%</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 20px; border-radius: 8px; color: white;">
+                    <div style="font-size: 14px; margin-bottom: 5px;">Controls</div>
+                    <div style="font-size: 32px; font-weight: 600;">${qc.control}</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Control PI: ${qc.control_pi}%</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 20px; border-radius: 8px; color: white;">
+                    <div style="font-size: 14px; margin-bottom: 5px;">Data Correction</div>
+                    <div style="font-size: 32px; font-weight: 600;">${qc.data_correction ? 'Yes' : 'No'}</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Applied to results</div>
+                </div>
+            </div>
+        </div>
+        ` : '<div class="section"><p style="color: #666;">No quality control data available for this sample.</p></div>'}
+
+        <!-- Sample Metadata -->
+        <div class="section">
+            <h3>Sample Metadata</h3>
+            <table class="data-table">
+                <tr><td><strong>Total Samples in Series</strong></td><td>${sample.total_samples}</td></tr>
+                <tr><td><strong>Replicate Count</strong></td><td>${sample.replicate_count}</td></tr>
+                <tr><td><strong>Quadrant Placement</strong></td><td>${sample.quadrant_placement}</td></tr>
+                <tr><td><strong>Compartment Type</strong></td><td>${sample.compartment_type}</td></tr>
+                <tr><td><strong>Technology ID</strong></td><td>${sample.technology_id}</td></tr>
+                <tr><td><strong>Location ID</strong></td><td>${sample.location_id}</td></tr>
+                <tr><td><strong>User ID</strong></td><td>${sample.user_id}</td></tr>
+                <tr><td><strong>Created At</strong></td><td>${formatDateTime(sample.created_at)}</td></tr>
+                <tr><td><strong>Updated At</strong></td><td>${formatDateTime(sample.updated_at)}</td></tr>
+            </table>
+        </div>
+
+        ${sample.notes ? `
+        <div class="section">
+            <h3>Notes</h3>
+            <div style="background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; border-radius: 4px;">
+                ${sample.notes}
+            </div>
+        </div>
+        ` : ''}
+    `;
+
+    // Hide all views
+    document.querySelectorAll('.view').forEach(view => {
+        view.classList.add('hidden');
+    });
+
+    // Show sampling data view and update its content
+    const samplingDataView = document.getElementById('sampling-data');
+    samplingDataView.classList.remove('hidden');
+    samplingDataView.innerHTML = content;
+}
+
+// Initialize sampling data view when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    renderSamplingData();
 });

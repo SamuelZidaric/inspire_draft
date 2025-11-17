@@ -29,6 +29,7 @@
                     </ul>
                 </li>
                 <li onclick="showView('solutions')">Solutions</li>
+                <li onclick="showView('sampling-data')">Sampling Data</li>
                 <li onclick="showView('impact')">Impact Dashboard</li>
             </ul>
         </div>
@@ -613,6 +614,88 @@
                         <h4>Macro Publications</h4>
                         <div class="number">14,133</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Sampling Data -->
+            <div id="sampling-data" class="view hidden">
+                <div class="breadcrumb">
+                    <a onclick="showView('overview')">Overview</a> > Sampling Data
+                </div>
+                <h2>Microplastic Sampling Database</h2>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>Total Samples</h4>
+                        <div class="number" id="total-samples-count">6</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Lab Analyses</h4>
+                        <div class="number" id="total-lab-analyses">6</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Quality Controls</h4>
+                        <div class="number" id="total-qc-records">6</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Avg Concentration</h4>
+                        <div class="number" id="avg-concentration">2.6</div>
+                        <small>particles/m³</small>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="section">
+                    <h3>Filters</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Campaign ID</label>
+                            <select id="filter-campaign" onchange="filterSamplingData()" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                                <option value="">All Campaigns</option>
+                                <option value="1">Campaign 1</option>
+                                <option value="2">Campaign 2</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Sampling Method</label>
+                            <select id="filter-method" onchange="filterSamplingData()" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                                <option value="">All Methods</option>
+                                <option value="Manta Net Trawling">Manta Net Trawling</option>
+                                <option value="Plankton Net Surface Tow">Plankton Net Surface Tow</option>
+                                <option value="Subsurface Pump Filtration">Subsurface Pump Filtration</option>
+                                <option value="Continuous Flow Centrifugation">Continuous Flow Centrifugation</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Data Type</label>
+                            <select id="filter-datatype" onchange="filterSamplingData()" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                                <option value="">All Types</option>
+                                <option value="Sampling">Sampling</option>
+                                <option value="Station">Station</option>
+                                <option value="Study">Study</option>
+                                <option value="Replica">Replica</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button onclick="resetFilters()" style="margin-top: 26px; width: 100%; padding: 8px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Reset Filters</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sample List -->
+                <div class="section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Campaign Micro Samples</h3>
+                        <div style="color: #666; font-size: 14px;" id="sample-count-display">Showing 6 of 6 samples</div>
+                    </div>
+                    <div id="sampling-samples-container">
+                        <!-- Samples will be rendered here by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Sample Detail Modal (hidden by default) -->
+                <div id="sample-detail-modal" style="display: none;">
+                    <!-- Sample detail content will be inserted here -->
                 </div>
             </div>
         </div>
