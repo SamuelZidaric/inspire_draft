@@ -55,12 +55,11 @@ async function loadData() {
 
         dataLoaded = true;
         hideLoadingState();
-        
-        // Initialize the sampling data view if it exists
-        if (document.getElementById('sampling-samples-container')) {
-            renderSamplingData();
-        }
-        
+
+        // Initialize locations and organisations views
+        renderLocations();
+        renderOrganisations();
+
         console.log('✓ All data loaded successfully');
         console.log('✓ Database tables aligned:', {
             campaigns: campaignsDB.length,
@@ -271,16 +270,81 @@ function showCampaignDetail(campaignId) {
         year: 'numeric', month: 'short', day: 'numeric'
     });
 
-    const samplesSection = campaignSamples.length > 0 ? `
+    // Get technology information
+    const technology = technologyMap[campaign.technology_id] || { name: 'Unknown', description: 'No technology information available', category: 'N/A' };
+
+    const content = `
+        <div class="breadcrumb">
+            <a onclick="showView('overview')">Overview</a> >
+            <a onclick="showView('${campaign.target_litter_category}')">${campaign.target_litter_category.charAt(0).toUpperCase() + campaign.target_litter_category.slice(1)} Campaigns</a> >
+            ${campaign.title}
+        </div>
+        <h2>${campaign.title}</h2>
+
         <div class="section">
-            <h3>Campaign Samples (${campaignSamples.length})</h3>
+            <h3>Campaign Overview</h3>
+            <p><strong>Campaign Code:</strong> ${campaign.campaign_code}</p>
+            <p><strong>Status:</strong> <span class="status-${campaign.active ? 'active' : 'inactive'}">${campaign.active ? 'Active' : 'Inactive'}</span></p>
+            <p><strong>Category:</strong> ${campaign.target_litter_category.toUpperCase()}</p>
+            <p><strong>Duration:</strong> ${formatDate(campaign.campaign_date_start)} - ${formatDate(campaign.campaign_date_end)}</p>
+            <p><strong>Sampling Stations:</strong> ${campaign.number_of_sampling_stations}</p>
+            <p><strong>Budget:</strong> ${campaign.budget}</p>
+            <br>
+            <p>${campaign.description}</p>
+            ${campaign.notes ? `
+                <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-left: 3px solid #ffc107; border-radius: 4px;">
+                    <strong>Notes:</strong> ${campaign.notes}
+                </div>
+            ` : ''}
+        </div>
+
+        <!-- Technologies Section - Prominent -->
+        <div class="section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px;">
+            <h3 style="color: white; margin-top: 0;">Technology Used</h3>
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center;">
+                <div style="font-size: 48px; opacity: 0.3;">
+                    <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 8px;"></div>
+                </div>
+                <div>
+                    <h4 style="color: white; margin: 0 0 8px 0; font-size: 24px;">${technology.name}</h4>
+                    <p style="margin: 0 0 8px 0; opacity: 0.9;">${technology.description}</p>
+                    <div style="display: flex; gap: 10px; margin-top: 12px;">
+                        <span style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;">
+                            ${technology.category}
+                        </span>
+                        <span style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;" onclick="showSolutionDetail('${technology.name}')" style="cursor: pointer;">
+                            View Details →
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location & Organization - Compact -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="section" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                <h4 style="margin-top: 0; font-size: 16px; color: #666;">Location</h4>
+                <p style="margin: 5px 0; font-size: 14px;"><strong>${campaign.location.site_name || campaign.location.site}</strong></p>
+                <p style="margin: 5px 0; font-size: 13px; color: #666;">${campaign.location.water_body_name} • ${campaign.location.location}</p>
+            </div>
+            <div class="section" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                <h4 style="margin-top: 0; font-size: 16px; color: #666;">Organisation</h4>
+                <p style="margin: 5px 0; font-size: 14px;"><strong>${campaign.organisation.name}</strong></p>
+                <p style="margin: 5px 0; font-size: 13px; color: #666;">${campaign.organisation.city} • ${campaign.organisation.referent_email}</p>
+            </div>
+        </div>
+
+        <!-- Samples Section - At the bottom as a list -->
+        ${campaignSamples.length > 0 ? `
+        <div class="section">
+            <h3>Collected Samples (${campaignSamples.length})</h3>
             <div class="campaign-list">
                 ${campaignSamples.map(sample => {
                     const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === sample.id);
                     const qc = qualityControlData.find(q => q.campaign_micro_sample_id === sample.id);
 
                     return `
-                        <div class="campaign-item" style="cursor: pointer; margin-bottom: 15px;" onclick="showSampleDetail(${sample.id})">
+                        <div class="campaign-item" style="margin-bottom: 15px;">
                             <div style="display: flex; justify-content: space-between; align-items: start;">
                                 <div>
                                     <h4 style="margin: 0 0 5px 0; color: #007bff;">${sample.sample_code}</h4>
@@ -292,7 +356,7 @@ function showCampaignDetail(campaignId) {
                                 </div>
                                 <div style="text-align: right;">
                                     <div style="font-size: 20px; font-weight: 600; color: #28a745;">${sample.particles_total_concentration}</div>
-                                    <div style="font-size: 11px; color: #666;">concentration</div>
+                                    <div style="font-size: 11px; color: #666;">particles/m³</div>
                                 </div>
                             </div>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 10px;">
@@ -320,66 +384,12 @@ function showCampaignDetail(campaignId) {
                 }).join('')}
             </div>
         </div>
-    ` : `
+        ` : `
         <div class="section">
-            <h3>Campaign Samples</h3>
+            <h3>Collected Samples</h3>
             <p style="color: #666; font-style: italic;">No samples have been collected for this campaign yet.</p>
         </div>
-    `;
-
-    const content = `
-        <div class="breadcrumb">
-            <a onclick="showView('overview')">Overview</a> >
-            <a onclick="showView('${campaign.target_litter_category}')">${campaign.target_litter_category.charAt(0).toUpperCase() + campaign.target_litter_category.slice(1)} Campaigns</a> >
-            ${campaign.title}
-        </div>
-        <h2>${campaign.title}</h2>
-
-        <div class="campaign-details">
-            <div>
-                <div class="section">
-                    <h3>Campaign Overview</h3>
-                    <p><strong>Campaign Code:</strong> ${campaign.campaign_code}</p>
-                    <p><strong>Status:</strong> <span class="status-${campaign.active ? 'active' : 'inactive'}">${campaign.active ? 'Active' : 'Inactive'}</span></p>
-                    <p><strong>Category:</strong> ${campaign.target_litter_category.toUpperCase()}</p>
-                    <p><strong>Duration:</strong> ${formatDate(campaign.campaign_date_start)} - ${formatDate(campaign.campaign_date_end)}</p>
-                    <p><strong>Sampling Stations:</strong> ${campaign.number_of_sampling_stations}</p>
-                    <p><strong>Budget:</strong> ${campaign.budget}</p>
-                    <br>
-                    <p>${campaign.description}</p>
-                    ${campaign.notes ? `
-                        <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-left: 3px solid #ffc107; border-radius: 4px;">
-                            <strong>Notes:</strong> ${campaign.notes}
-                        </div>
-                    ` : ''}
-                </div>
-
-                <div class="section">
-                    <h3>Organisation</h3>
-                    <p><strong>Name:</strong> ${campaign.organisation.name}</p>
-                    <p><strong>Lead Institution:</strong> ${campaign.lead}</p>
-                    <p><strong>Address:</strong> ${campaign.organisation.address}, ${campaign.organisation.city}, ${campaign.organisation.postal_code}</p>
-                    <p><strong>Contact:</strong> ${campaign.organisation.referent_email}</p>
-                    ${campaign.organisation.website ? `<p><strong>Website:</strong> <a href="${campaign.organisation.website}" target="_blank" style="color: #007bff;">${campaign.organisation.website}</a></p>` : ''}
-                    <p><strong>VAT:</strong> ${campaign.organisation.vat_number}</p>
-                </div>
-
-                <div class="section">
-                    <h3>Location Details</h3>
-                    <p><strong>Site:</strong> ${campaign.location.site_name || campaign.location.site}</p>
-                    <p><strong>Water Body:</strong> ${campaign.location.water_body_name} (${campaign.location.water_body_type})</p>
-                    <p><strong>Location:</strong> ${campaign.location.location}</p>
-                    ${campaign.location.main_river ? `<p><strong>Main River:</strong> ${campaign.location.main_river}</p>` : ''}
-                    <p><strong>Coordinates:</strong> ${campaign.location.start_latitude}, ${campaign.location.start_longitude}</p>
-                    <p><strong>Timezone:</strong> ${campaign.location.timezone}</p>
-                    ${campaign.location.is_demo_site ? `<p><span class="tech-tag" style="background: #17a2b8;">Demo Site</span></p>` : ''}
-                </div>
-            </div>
-
-            <div>
-                ${samplesSection}
-            </div>
-        </div>
+        `}
     `;
 
     document.getElementById('campaign-content').innerHTML = content;
@@ -703,9 +713,15 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Sampling Data Functions
-let currentFilteredSamples = [...campaignMicroSampleData];
+// Technology mapping based on campaign IDs
+const technologyMap = {
+    1: { name: 'Manta Net', description: 'Surface trawling net for microplastic sampling', category: 'Detection' },
+    2: { name: 'Clera Filtration Unit', description: 'Special membrane filtration for micro-filtration', category: 'Collection' },
+    3: { name: 'Ferrybox Sampling', description: 'Water sampling device', category: 'Detection' },
+    4: { name: 'Manta Net', description: 'Surface trawling net for microplastic sampling', category: 'Detection' }
+};
 
+// Helper function for formatting dates
 function formatDateTime(dateTimeString) {
     const date = new Date(dateTimeString);
     return date.toLocaleString('en-US', {
@@ -723,308 +739,69 @@ function formatCoordinate(lat, lon) {
     return `${Math.abs(lat).toFixed(4)}° ${latDir}, ${Math.abs(lon).toFixed(4)}° ${lonDir}`;
 }
 
-function renderSamplingData(samples = campaignMicroSampleData) {
-    const container = document.getElementById('sampling-samples-container');
-    if (!container) return;
+// Locations rendering function
+function renderLocations() {
+    const container = document.getElementById('locations-container');
+    if (!container || !locationsDB || locationsDB.length === 0) return;
 
-    currentFilteredSamples = samples;
-
-    if (samples.length === 0) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: #666;">
-                <h4>No samples found</h4>
-                <p>Try adjusting your filters</p>
-            </div>
-        `;
-        document.getElementById('sample-count-display').textContent = 'Showing 0 of 0 samples';
-        return;
-    }
-
-    const html = samples.map(sample => {
-        const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === sample.id);
-        const qc = qualityControlData.find(q => q.campaign_micro_sample_id === sample.id);
-
+    const html = locationsDB.map(location => {
         return `
-            <div class="campaign-item" style="cursor: pointer; transition: all 0.3s ease;" onclick="showSampleDetail(${sample.id})">
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
-                    <div>
-                        <h4 style="margin: 0 0 5px 0; color: #007bff;">${sample.sample_code}</h4>
-                        <div class="meta">
-                            Campaign ${sample.campaign_id} |
-                            <span class="status-active">${sample.data_type}</span> |
-                            ${sample.station_id} |
-                            ${formatDateTime(sample.sampling_date_start)}
-                        </div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 24px; font-weight: 600; color: #28a745;">${sample.particles_total_concentration}</div>
-                        <div style="font-size: 12px; color: #666;">concentration</div>
-                    </div>
+            <div class="campaign-item">
+                <h4>${location.site}</h4>
+                <div class="meta">
+                    ${location.location} | ${location.water_body_type} |
+                    ${location.is_demo_site ? '<span class="tech-tag" style="background: #17a2b8;">Demo Site</span>' : ''}
                 </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 15px 0;">
-                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
-                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Sampling Method</div>
-                        <div style="font-weight: 600; font-size: 14px;">${sample.sampling_method}</div>
-                    </div>
-                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
-                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Survey Area</div>
-                        <div style="font-weight: 600; font-size: 14px;">${sample.survey_length} × ${sample.survey_width}</div>
-                    </div>
-                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
-                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Total Particles</div>
-                        <div style="font-weight: 600; font-size: 14px;">${sample.particles_total_count}</div>
-                    </div>
-                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px;">
-                        <div style="font-size: 12px; color: #666; margin-bottom: 3px;">Tire Wear Conc.</div>
-                        <div style="font-weight: 600; font-size: 14px;">${sample.tire_wear_concentration} µg/L</div>
-                    </div>
+                <div style="margin-top: 10px;">
+                    <p><strong>Water Body:</strong> ${location.water_body_name}</p>
+                    <p><strong>Site Name:</strong> ${location.site_name}</p>
+                    ${location.main_river ? `<p><strong>Main River:</strong> ${location.main_river}</p>` : ''}
+                    <p><strong>Timezone:</strong> ${location.timezone}</p>
                 </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
                     <div>
-                        <div style="font-size: 12px; color: #666;">Start: ${formatCoordinate(sample.sampling_latitude_start, sample.sampling_longitude_start)}</div>
+                        <div style="font-size: 12px; color: #666;">Start Coordinates</div>
+                        <div style="font-weight: 600;">${formatCoordinate(parseFloat(location.start_latitude), parseFloat(location.start_longitude))}</div>
                     </div>
                     <div>
-                        <div style="font-size: 12px; color: #666;">End: ${formatCoordinate(sample.sampling_latitude_end, sample.sampling_longitude_end)}</div>
+                        <div style="font-size: 12px; color: #666;">End Coordinates</div>
+                        <div style="font-weight: 600;">${formatCoordinate(parseFloat(location.end_latitude), parseFloat(location.end_longitude))}</div>
                     </div>
-                </div>
-
-                ${sample.notes ? `
-                    <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border-left: 3px solid #ffc107; border-radius: 4px; font-size: 13px;">
-                        <strong>Notes:</strong> ${sample.notes}
-                    </div>
-                ` : ''}
-
-                <div style="margin-top: 12px; display: flex; gap: 10px;">
-                    ${labAnalysis ? `<span class="tech-tag" style="background: #28a745;">Lab Analysis Available</span>` : ''}
-                    ${qc ? `<span class="tech-tag" style="background: #17a2b8;">QC: ${qc.control_pi}% Control</span>` : ''}
-                    <span class="tech-tag">${sample.spatial_or_temporal_monitoring}</span>
-                    <span class="tech-tag">Replicates: ${sample.replicate_count}</span>
                 </div>
             </div>
         `;
     }).join('');
 
     container.innerHTML = html;
-    document.getElementById('sample-count-display').textContent =
-        `Showing ${samples.length} of ${campaignMicroSampleData.length} samples`;
 }
 
-function filterSamplingData() {
-    const campaignFilter = document.getElementById('filter-campaign').value;
-    const methodFilter = document.getElementById('filter-method').value;
-    const datatypeFilter = document.getElementById('filter-datatype').value;
+// Organisations rendering function
+function renderOrganisations() {
+    const container = document.getElementById('organisations-container');
+    if (!container || !organisationsDB || organisationsDB.length === 0) return;
 
-    let filtered = campaignMicroSampleData.filter(sample => {
-        const matchesCampaign = !campaignFilter || sample.campaign_id.toString() === campaignFilter;
-        const matchesMethod = !methodFilter || sample.sampling_method === methodFilter;
-        const matchesDatatype = !datatypeFilter || sample.data_type === datatypeFilter;
-
-        return matchesCampaign && matchesMethod && matchesDatatype;
-    });
-
-    renderSamplingData(filtered);
-}
-
-function resetFilters() {
-    document.getElementById('filter-campaign').value = '';
-    document.getElementById('filter-method').value = '';
-    document.getElementById('filter-datatype').value = '';
-    renderSamplingData(campaignMicroSampleData);
-}
-
-function showSampleDetail(sampleId) {
-    const sample = campaignMicroSampleData.find(s => s.id === sampleId);
-    if (!sample) return;
-
-    const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === sampleId);
-    const qc = qualityControlData.find(q => q.campaign_micro_sample_id === sampleId);
-
-    const content = `
-        <div class="breadcrumb">
-            <a onclick="showView('overview')">Overview</a> >
-            <a onclick="showView('sampling-data')">Sampling Data</a> >
-            ${sample.sample_code}
-        </div>
-        <h2>${sample.sample_code} - Detailed View</h2>
-
-        <!-- Key Metrics -->
-        <div class="stats">
-            <div class="stat-card">
-                <h4>Total Particles</h4>
-                <div class="number">${sample.particles_total_count}</div>
-            </div>
-            <div class="stat-card">
-                <h4>Concentration</h4>
-                <div class="number">${sample.particles_total_concentration}</div>
-            </div>
-            <div class="stat-card">
-                <h4>Total Weight</h4>
-                <div class="number">${sample.particles_total_weight}</div>
-            </div>
-            <div class="stat-card">
-                <h4>Duration</h4>
-                <div class="number">${sample.sampling_duration_hours}</div>
-                <small>hours</small>
-            </div>
-        </div>
-
-        <!-- Sample Information -->
-        <div class="section">
-            <h3>Sample Information</h3>
-            <table class="data-table">
-                <tr><td><strong>Sample Code</strong></td><td>${sample.sample_code}</td></tr>
-                <tr><td><strong>Campaign ID</strong></td><td>${sample.campaign_id}</td></tr>
-                <tr><td><strong>Station ID</strong></td><td>${sample.station_id}</td></tr>
-                <tr><td><strong>Data Type</strong></td><td><span class="status-active">${sample.data_type}</span></td></tr>
-                <tr><td><strong>Monitoring Type</strong></td><td>${sample.spatial_or_temporal_monitoring}</td></tr>
-                <tr><td><strong>Sampling Method</strong></td><td>${sample.sampling_method}</td></tr>
-                <tr><td><strong>Sampling Instrument</strong></td><td>${sample.sampling_instrument} (${sample.sampling_instrument_group})</td></tr>
-                <tr><td><strong>Protocol Reference</strong></td><td>${sample.sampling_protocol_reference}</td></tr>
-            </table>
-        </div>
-
-        <!-- Temporal & Spatial Data -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div class="section">
-                <h3>Temporal Data</h3>
-                <table class="data-table">
-                    <tr><td><strong>Start Time</strong></td><td>${formatDateTime(sample.sampling_date_start)}</td></tr>
-                    <tr><td><strong>End Time</strong></td><td>${formatDateTime(sample.sampling_date_end)}</td></tr>
-                    <tr><td><strong>Duration</strong></td><td>${sample.sampling_duration_hours} hours</td></tr>
-                    <tr><td><strong>Time Reference</strong></td><td>${sample.sampling_time_reference}</td></tr>
-                </table>
-            </div>
-
-            <div class="section">
-                <h3>Spatial Data</h3>
-                <table class="data-table">
-                    <tr><td><strong>Start Position</strong></td><td>${formatCoordinate(sample.sampling_latitude_start, sample.sampling_longitude_start)}</td></tr>
-                    <tr><td><strong>End Position</strong></td><td>${formatCoordinate(sample.sampling_latitude_end, sample.sampling_longitude_end)}</td></tr>
-                    <tr><td><strong>Survey Length</strong></td><td>${sample.survey_length}</td></tr>
-                    <tr><td><strong>Survey Width</strong></td><td>${sample.survey_width}</td></tr>
-                </table>
-            </div>
-        </div>
-
-        <!-- Flowmeter Data -->
-        <div class="section">
-            <h3>Flowmeter & Equipment</h3>
-            <table class="data-table">
-                <tr><td><strong>Flowmeter Model</strong></td><td>${sample.flowmeter_model}</td></tr>
-                <tr><td><strong>Flowmeter Equation</strong></td><td><code>${sample.flowmeter_equation}</code></td></tr>
-                <tr><td><strong>Start Count</strong></td><td>${sample.flowmeter_start_count}</td></tr>
-                <tr><td><strong>End Count</strong></td><td>${sample.flowmeter_end_count}</td></tr>
-            </table>
-        </div>
-
-        <!-- Particle Analysis Results -->
-        <div class="section">
-            <h3>Particle Analysis Results</h3>
-            <table class="data-table">
-                <tr><td><strong>Total Particle Count</strong></td><td>${sample.particles_total_count}</td></tr>
-                <tr><td><strong>Total Weight</strong></td><td>${sample.particles_total_weight}</td></tr>
-                <tr><td><strong>Total Concentration</strong></td><td>${sample.particles_total_concentration}</td></tr>
-                <tr><td><strong>Tire Marker Concentration</strong></td><td>${sample.tire_marker_concentration} µg/L</td></tr>
-                <tr><td><strong>Tire Wear Concentration</strong></td><td>${sample.tire_wear_concentration} µg/L</td></tr>
-                <tr><td><strong>Tire Wear Conc. (Volume)</strong></td><td>${sample.tire_wear_concentration_volume} µg/L</td></tr>
-                <tr><td><strong>Tire Wear Leachable Total</strong></td><td>${sample.tire_wear_leachable_total_concentration} µg/L</td></tr>
-            </table>
-        </div>
-
-        <!-- Lab Analysis -->
-        ${labAnalysis ? `
-        <div class="section">
-            <h3>Laboratory Analysis</h3>
-            <table class="data-table">
-                <tr><td><strong>Analysis ID</strong></td><td>${labAnalysis.id}</td></tr>
-                <tr><td><strong>Digestion</strong></td><td>${labAnalysis.digestion_y_n}</td></tr>
-                ${labAnalysis.digestion_y_n === 'Yes' ? `
-                    <tr><td><strong>Digestion Solution</strong></td><td>${labAnalysis.digestion_solution}</td></tr>
-                    <tr><td><strong>Temperature</strong></td><td>${labAnalysis.digestion_temperature_c}°C</td></tr>
-                    <tr><td><strong>Time</strong></td><td>${labAnalysis.digestion_time_h} hours</td></tr>
-                ` : ''}
-                <tr><td><strong>Recovery Solution</strong></td><td>${labAnalysis.recovery_solution}</td></tr>
-                <tr><td><strong>Density Solution</strong></td><td>${labAnalysis.density_solution_g_cm3} g/cm³</td></tr>
-                <tr><td><strong>Recovery Particles</strong></td><td><span style="color: #28a745; font-weight: 600;">${labAnalysis.recovery_particles}</span></td></tr>
-            </table>
-
-            <h4 style="margin-top: 20px;">Polymer Identification</h4>
-            <table class="data-table">
-                <tr><td><strong>PI Method</strong></td><td>${labAnalysis.polymer_identification}</td></tr>
-                <tr><td><strong>PI Instrument</strong></td><td>${labAnalysis.pi_instrument}</td></tr>
-                <tr><td><strong>PI Technique</strong></td><td>${labAnalysis.pi_method_technique}</td></tr>
-                <tr><td><strong>PI Compartment</strong></td><td><span class="tech-tag">${labAnalysis.pi_compartment}</span></td></tr>
-                <tr><td><strong>PI Percentage</strong></td><td>${labAnalysis.pi_percentage}%</td></tr>
-                <tr><td><strong>PI Number of Particles</strong></td><td>${labAnalysis.pi_number_particles}</td></tr>
-                <tr><td><strong>Fibers</strong></td><td>${labAnalysis.fibers}</td></tr>
-            </table>
-        </div>
-        ` : '<div class="section"><p style="color: #666;">No lab analysis data available for this sample.</p></div>'}
-
-        <!-- Quality Control -->
-        ${qc ? `
-        <div class="section">
-            <h3>Quality Control</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
-                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px; color: white;">
-                    <div style="font-size: 14px; margin-bottom: 5px;">Blanks</div>
-                    <div style="font-size: 32px; font-weight: 600;">${qc.blanks}</div>
-                    <div style="font-size: 12px; margin-top: 5px;">Blank PI: ${qc.blanck_pi}%</div>
+    const html = organisationsDB.map(org => {
+        return `
+            <div class="campaign-item">
+                <h4>${org.name}</h4>
+                <div class="meta">
+                    ${org.city}, ${org.state_region} |
+                    <span class="status-active">Active</span>
                 </div>
-                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 20px; border-radius: 8px; color: white;">
-                    <div style="font-size: 14px; margin-bottom: 5px;">Controls</div>
-                    <div style="font-size: 32px; font-weight: 600;">${qc.control}</div>
-                    <div style="font-size: 12px; margin-top: 5px;">Control PI: ${qc.control_pi}%</div>
+                <div style="margin-top: 10px;">
+                    <p><strong>Address:</strong> ${org.address}, ${org.postal_code} ${org.city}</p>
+                    <p><strong>Contact:</strong> ${org.referent_email}</p>
+                    <p><strong>Administrative:</strong> ${org.administrative_email}</p>
+                    <p><strong>Phone:</strong> ${org.telephone}</p>
+                    ${org.website ? `<p><strong>Website:</strong> <a href="${org.website}" target="_blank" style="color: #007bff;">${org.website}</a></p>` : ''}
                 </div>
-                <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 20px; border-radius: 8px; color: white;">
-                    <div style="font-size: 14px; margin-bottom: 5px;">Data Correction</div>
-                    <div style="font-size: 32px; font-weight: 600;">${qc.data_correction ? 'Yes' : 'No'}</div>
-                    <div style="font-size: 12px; margin-top: 5px;">Applied to results</div>
+                <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                    <p style="margin: 0;"><strong>VAT Number:</strong> ${org.vat_number}</p>
+                    ${org.emodnet_originator ? '<span class="tech-tag" style="background: #28a745; margin-top: 8px; display: inline-block;">EMODnet Originator</span>' : ''}
                 </div>
             </div>
-        </div>
-        ` : '<div class="section"><p style="color: #666;">No quality control data available for this sample.</p></div>'}
+        `;
+    }).join('');
 
-        <!-- Sample Metadata -->
-        <div class="section">
-            <h3>Sample Metadata</h3>
-            <table class="data-table">
-                <tr><td><strong>Total Samples in Series</strong></td><td>${sample.total_samples}</td></tr>
-                <tr><td><strong>Replicate Count</strong></td><td>${sample.replicate_count}</td></tr>
-                <tr><td><strong>Quadrant Placement</strong></td><td>${sample.quadrant_placement}</td></tr>
-                <tr><td><strong>Compartment Type</strong></td><td>${sample.compartment_type}</td></tr>
-                <tr><td><strong>Technology ID</strong></td><td>${sample.technology_id}</td></tr>
-                <tr><td><strong>Location ID</strong></td><td>${sample.location_id}</td></tr>
-                <tr><td><strong>User ID</strong></td><td>${sample.user_id}</td></tr>
-                <tr><td><strong>Created At</strong></td><td>${formatDateTime(sample.created_at)}</td></tr>
-                <tr><td><strong>Updated At</strong></td><td>${formatDateTime(sample.updated_at)}</td></tr>
-            </table>
-        </div>
-
-        ${sample.notes ? `
-        <div class="section">
-            <h3>Notes</h3>
-            <div style="background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; border-radius: 4px;">
-                ${sample.notes}
-            </div>
-        </div>
-        ` : ''}
-    `;
-
-    // Hide all views
-    document.querySelectorAll('.view').forEach(view => {
-        view.classList.add('hidden');
-    });
-
-    // Show sampling data view and update its content
-    const samplingDataView = document.getElementById('sampling-data');
-    samplingDataView.classList.remove('hidden');
-    samplingDataView.innerHTML = content;
+    container.innerHTML = html;
 }
-
-// Initialize sampling data view when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    renderSamplingData();
-});
