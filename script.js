@@ -282,7 +282,7 @@ function showCampaignDetail(campaignId) {
                     const qc = qualityControlData.find(q => q.campaign_micro_sample_id === sample.id);
 
                     return `
-                        <div class="campaign-item" style="margin-bottom: 15px;">
+                        <div class="campaign-item campaign-clickable" style="margin-bottom: 15px;" onclick="showSampleDetail(${sample.id}, ${numericId})">
                             <div style="display: flex; justify-content: space-between; align-items: start;">
                                 <div>
                                     <h4 style="margin: 0 0 5px 0; color: #007bff;">${sample.sample_code}</h4>
@@ -740,13 +740,333 @@ function formatCoordinate(lat, lon) {
 }
 
 // Locations rendering function
+// Show location detail
+function showLocationDetail(locationId) {
+    const numericId = typeof locationId === 'string' ? parseInt(locationId) : locationId;
+    const location = locationsDB.find(l => l.id === numericId);
+
+    if (!location) {
+        console.error(`Location not found with ID: ${locationId}`);
+        return;
+    }
+
+    // Find campaigns using this location
+    const campaignsAtLocation = campaignsDB.filter(c => c.location.id === numericId);
+
+    const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric'
+    });
+
+    const content = `
+        <div class="breadcrumb">
+            <a onclick="showView('overview')">Overview</a> >
+            <a onclick="showView('locations')">Locations</a> >
+            ${location.site_name || location.site}
+        </div>
+        <h2>${location.site}</h2>
+
+        <div class="campaign-details">
+            <div>
+                <div class="section">
+                    <h3>Location Overview</h3>
+                    <p><strong>Site Name:</strong> ${location.site_name}</p>
+                    <p><strong>Water Body:</strong> ${location.water_body_name} (${location.water_body_type})</p>
+                    <p><strong>Country:</strong> ${location.location}</p>
+                    ${location.main_river ? `<p><strong>Main River:</strong> ${location.main_river}</p>` : ''}
+                    <p><strong>Timezone:</strong> ${location.timezone}</p>
+                    ${location.is_demo_site ? `<p><span class="tech-tag" style="background: #17a2b8;">Demo Site</span></p>` : ''}
+                </div>
+
+                <div class="section">
+                    <h3>Geographic Coordinates</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Start Point</div>
+                            <div style="font-weight: 600; font-size: 16px;">${formatCoordinate(parseFloat(location.start_latitude), parseFloat(location.start_longitude))}</div>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">End Point</div>
+                            <div style="font-weight: 600; font-size: 16px;">${formatCoordinate(parseFloat(location.end_latitude), parseFloat(location.end_longitude))}</div>
+                        </div>
+                    </div>
+                </div>
+
+                ${campaignsAtLocation.length > 0 ? `
+                    <div class="section">
+                        <h3>Campaigns at this Location (${campaignsAtLocation.length})</h3>
+                        <div class="campaign-list">
+                            ${campaignsAtLocation.map(campaign => `
+                                <div class="campaign-item campaign-clickable" onclick="showCampaignDetail(${campaign.id})">
+                                    <h4>${campaign.title}</h4>
+                                    <div class="meta">
+                                        ${campaign.campaign_code} |
+                                        <span class="status-${campaign.active ? 'active' : 'inactive'}">${campaign.active ? 'Active' : 'Inactive'}</span> |
+                                        ${formatDate(campaign.campaign_date_start)} - ${formatDate(campaign.campaign_date_end)}
+                                    </div>
+                                    <p style="margin-top: 8px; font-size: 13px;">${campaign.description}</p>
+                                    <div style="margin-top: 8px;">
+                                        <span class="tech-tag">${campaign.lead}</span>
+                                        <span class="tech-tag">${campaign.budget}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : `
+                    <div class="section">
+                        <h3>Campaigns at this Location</h3>
+                        <p style="color: #666; font-style: italic;">No campaigns are currently running at this location.</p>
+                    </div>
+                `}
+            </div>
+        </div>
+    `;
+
+    document.getElementById('location-content').innerHTML = content;
+    document.querySelectorAll('.view').forEach(view => view.classList.add('hidden'));
+    document.getElementById('location-detail').classList.remove('hidden');
+}
+
+// Show organisation detail
+function showOrganisationDetail(orgId) {
+    const numericId = typeof orgId === 'string' ? parseInt(orgId) : orgId;
+    const organisation = organisationsDB.find(o => o.id === numericId);
+
+    if (!organisation) {
+        console.error(`Organisation not found with ID: ${orgId}`);
+        return;
+    }
+
+    // Find campaigns led by this organisation
+    const orgCampaigns = campaignsDB.filter(c => c.organisation.id === numericId);
+
+    const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric'
+    });
+
+    const content = `
+        <div class="breadcrumb">
+            <a onclick="showView('overview')">Overview</a> >
+            <a onclick="showView('organisations')">Organisations</a> >
+            ${organisation.name}
+        </div>
+        <h2>${organisation.name}</h2>
+
+        <div class="campaign-details">
+            <div>
+                <div class="section">
+                    <h3>Organisation Details</h3>
+                    <p><strong>Type:</strong> ${organisation.organisation_type_id === 1 ? 'Research Institute' : organisation.organisation_type_id === 2 ? 'University' : 'Organisation'}</p>
+                    <p><strong>Location:</strong> ${organisation.city}, ${organisation.state_region}</p>
+                    <p><strong>Country:</strong> Country ID ${organisation.country_id}</p>
+                    ${organisation.emodnet_originator ? `<p><span class="tech-tag" style="background: #28a745;">EMODnet Originator</span></p>` : ''}
+                </div>
+
+                <div class="section">
+                    <h3>Contact Information</h3>
+                    <p><strong>Address:</strong> ${organisation.address}</p>
+                    <p><strong>Postal Code:</strong> ${organisation.postal_code}</p>
+                    <p><strong>City:</strong> ${organisation.city}</p>
+                    <p><strong>State/Region:</strong> ${organisation.state_region}</p>
+                    <p><strong>Phone:</strong> ${organisation.telephone}</p>
+                    <p><strong>Referent Email:</strong> <a href="mailto:${organisation.referent_email}" style="color: #007bff;">${organisation.referent_email}</a></p>
+                    <p><strong>Administrative Email:</strong> <a href="mailto:${organisation.administrative_email}" style="color: #007bff;">${organisation.administrative_email}</a></p>
+                    ${organisation.website ? `<p><strong>Website:</strong> <a href="${organisation.website}" target="_blank" style="color: #007bff;">${organisation.website}</a></p>` : ''}
+                </div>
+
+                <div class="section">
+                    <h3>Administrative Information</h3>
+                    <p><strong>VAT Number:</strong> ${organisation.vat_number}</p>
+                    <p><strong>Status:</strong> <span class="status-${organisation.active ? 'active' : 'inactive'}">${organisation.active ? 'Active' : 'Inactive'}</span></p>
+                </div>
+
+                ${orgCampaigns.length > 0 ? `
+                    <div class="section">
+                        <h3>Campaigns Led by this Organisation (${orgCampaigns.length})</h3>
+                        <div class="campaign-list">
+                            ${orgCampaigns.map(campaign => `
+                                <div class="campaign-item campaign-clickable" onclick="showCampaignDetail(${campaign.id})">
+                                    <h4>${campaign.title}</h4>
+                                    <div class="meta">
+                                        ${campaign.campaign_code} |
+                                        <span class="status-${campaign.active ? 'active' : 'inactive'}">${campaign.active ? 'Active' : 'Inactive'}</span> |
+                                        ${formatDate(campaign.campaign_date_start)} - ${formatDate(campaign.campaign_date_end)}
+                                    </div>
+                                    <p style="margin-top: 8px; font-size: 13px;">${campaign.description}</p>
+                                    <div style="margin-top: 8px;">
+                                        <span class="tech-tag">${campaign.location.location}</span>
+                                        <span class="tech-tag">${campaign.budget}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : `
+                    <div class="section">
+                        <h3>Campaigns Led by this Organisation</h3>
+                        <p style="color: #666; font-style: italic;">This organisation is not currently leading any campaigns.</p>
+                    </div>
+                `}
+            </div>
+        </div>
+    `;
+
+    document.getElementById('organisation-content').innerHTML = content;
+    document.querySelectorAll('.view').forEach(view => view.classList.add('hidden'));
+    document.getElementById('organisation-detail').classList.remove('hidden');
+}
+
+// Show sample detail
+let previousViewBeforeSample = 'micro';
+
+function showSampleDetail(sampleId, fromCampaignId = null) {
+    const numericId = typeof sampleId === 'string' ? parseInt(sampleId) : sampleId;
+    const sample = campaignMicroSampleData.find(s => s.id === numericId);
+
+    if (!sample) {
+        console.error(`Sample not found with ID: ${sampleId}`);
+        return;
+    }
+
+    if (fromCampaignId) {
+        previousViewBeforeSample = 'campaign-detail';
+        currentCampaignId = fromCampaignId;
+    }
+
+    const campaign = getCampaignById(sample.campaign_id);
+    const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === numericId);
+    const qc = qualityControlData.find(q => q.campaign_micro_sample_id === numericId);
+
+    const content = `
+        <div class="breadcrumb">
+            <a onclick="showView('overview')">Overview</a> >
+            ${campaign ? `<a onclick="showCampaignDetail(${campaign.id})">${campaign.title}</a> >` : ''}
+            ${sample.sample_code}
+        </div>
+        <h2>Sample: ${sample.sample_code}</h2>
+
+        <div class="campaign-details">
+            <div>
+                <div class="section">
+                    <h3>Sample Overview</h3>
+                    <p><strong>Sample Code:</strong> ${sample.sample_code}</p>
+                    <p><strong>Campaign:</strong> ${campaign ? `<a onclick="showCampaignDetail(${campaign.id})" style="color: #007bff; cursor: pointer;">${campaign.title}</a>` : 'Unknown'}</p>
+                    <p><strong>Station ID:</strong> ${sample.station_id}</p>
+                    <p><strong>Data Type:</strong> <span class="status-active">${sample.data_type}</span></p>
+                    <p><strong>Monitoring Type:</strong> ${sample.spatial_or_temporal_monitoring}</p>
+                </div>
+
+                <div class="section">
+                    <h3>Sampling Details</h3>
+                    <p><strong>Method:</strong> ${sample.sampling_method}</p>
+                    <p><strong>Instrument:</strong> ${sample.sampling_instrument} (${sample.sampling_instrument_group})</p>
+                    <p><strong>Protocol:</strong> ${sample.sampling_protocol_reference}</p>
+                    <p><strong>Date/Time:</strong> ${formatDateTime(sample.sampling_date_start)} - ${formatDateTime(sample.sampling_date_end)}</p>
+                    <p><strong>Duration:</strong> ${sample.sampling_duration_hours} hours</p>
+                    <p><strong>Time Reference:</strong> ${sample.sampling_time_reference}</p>
+                </div>
+
+                <div class="section">
+                    <h3>Location & Survey</h3>
+                    <p><strong>Start Coordinates:</strong> ${formatCoordinate(parseFloat(sample.sampling_latitude_start), parseFloat(sample.sampling_longitude_start))}</p>
+                    <p><strong>End Coordinates:</strong> ${formatCoordinate(parseFloat(sample.sampling_latitude_end), parseFloat(sample.sampling_longitude_end))}</p>
+                    <p><strong>Survey Length:</strong> ${sample.survey_length}</p>
+                    <p><strong>Survey Width:</strong> ${sample.survey_width}</p>
+                </div>
+
+                <div class="section">
+                    <h3>Flowmeter Data</h3>
+                    <p><strong>Model:</strong> ${sample.flowmeter_model}</p>
+                    <p><strong>Equation:</strong> <code>${sample.flowmeter_equation}</code></p>
+                    <p><strong>Start Count:</strong> ${sample.flowmeter_start_count}</p>
+                    <p><strong>End Count:</strong> ${sample.flowmeter_end_count}</p>
+                </div>
+
+                <div class="section">
+                    <h3>Particle Analysis</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Total Count</div>
+                            <div style="font-weight: 600; font-size: 24px; color: #2196f3;">${sample.particles_total_count}</div>
+                            <div style="font-size: 11px; color: #666;">particles</div>
+                        </div>
+                        <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 4px solid #4caf50;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Concentration</div>
+                            <div style="font-weight: 600; font-size: 24px; color: #4caf50;">${sample.particles_total_concentration}</div>
+                        </div>
+                        <div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Total Weight</div>
+                            <div style="font-weight: 600; font-size: 24px; color: #ff9800;">${sample.particles_total_weight}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Tire Wear Particles</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Tire Marker</div>
+                            <div style="font-weight: 600; font-size: 18px;">${sample.tire_marker_concentration} µg/L</div>
+                        </div>
+                        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Tire Wear</div>
+                            <div style="font-weight: 600; font-size: 18px;">${sample.tire_wear_concentration} µg/L</div>
+                        </div>
+                        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Tire Wear (Volume)</div>
+                            <div style="font-weight: 600; font-size: 18px;">${sample.tire_wear_concentration_volume} µg/L</div>
+                        </div>
+                        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Leachable Total</div>
+                            <div style="font-weight: 600; font-size: 18px;">${sample.tire_wear_leachable_total_concentration} µg/L</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Sample Details</h3>
+                    <p><strong>Total Samples:</strong> ${sample.total_samples}</p>
+                    <p><strong>Replicate Count:</strong> ${sample.replicate_count}</p>
+                    <p><strong>Quadrant Placement:</strong> ${sample.quadrant_placement}</p>
+                    <p><strong>Compartment Type:</strong> ${sample.compartment_type}</p>
+                    ${sample.notes ? `
+                        <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-left: 3px solid #ffc107; border-radius: 4px;">
+                            <strong>Notes:</strong> ${sample.notes}
+                        </div>
+                    ` : ''}
+                </div>
+
+                ${labAnalysis || qc ? `
+                    <div class="section">
+                        <h3>Quality Control & Lab Analysis</h3>
+                        ${labAnalysis ? `<span class="tech-tag" style="background: #28a745; margin-right: 8px;">Lab Analysis Available</span>` : ''}
+                        ${qc ? `<span class="tech-tag" style="background: #17a2b8;">QC Data Available</span>` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+
+    document.getElementById('sample-content').innerHTML = content;
+    document.querySelectorAll('.view').forEach(view => view.classList.add('hidden'));
+    document.getElementById('sample-detail').classList.remove('hidden');
+}
+
+function goBackFromSample() {
+    if (previousViewBeforeSample === 'campaign-detail' && currentCampaignId) {
+        showCampaignDetail(currentCampaignId);
+    } else {
+        showView('micro');
+    }
+}
+
 function renderLocations() {
     const container = document.getElementById('locations-container');
     if (!container || !locationsDB || locationsDB.length === 0) return;
 
     const html = locationsDB.map(location => {
         return `
-            <div class="campaign-item">
+            <div class="campaign-item campaign-clickable" onclick="showLocationDetail(${location.id})">
                 <h4>${location.site}</h4>
                 <div class="meta">
                     ${location.location} | ${location.water_body_type} |
@@ -782,7 +1102,7 @@ function renderOrganisations() {
 
     const html = organisationsDB.map(org => {
         return `
-            <div class="campaign-item">
+            <div class="campaign-item campaign-clickable" onclick="showOrganisationDetail(${org.id})">
                 <h4>${org.name}</h4>
                 <div class="meta">
                     ${org.city}, ${org.state_region} |
