@@ -357,14 +357,6 @@ function showCampaignDetail(campaignId) {
                 </div>
 
                 <div class="section">
-                    <h3>Technology</h3>
-                    <p><strong>Name:</strong> ${technology.name}</p>
-                    <p><strong>Description:</strong> ${technology.description}</p>
-                    <p><strong>Category:</strong> ${technology.category}</p>
-                    <button class="back-btn" onclick="showSolutionDetail('${technology.name}')" style="margin-top: 10px;">View Technology Details</button>
-                </div>
-
-                <div class="section">
                     <h3>Organisation</h3>
                     <p><strong>Name:</strong> ${campaign.organisation.name}</p>
                     <p><strong>Address:</strong> ${campaign.organisation.address}, ${campaign.organisation.city}, ${campaign.organisation.postal_code}</p>
@@ -383,10 +375,19 @@ function showCampaignDetail(campaignId) {
                     <p><strong>Timezone:</strong> ${campaign.location.timezone}</p>
                     ${campaign.location.is_demo_site ? `<p><span class="tech-tag" style="background: #17a2b8;">Demo Site</span></p>` : ''}
                 </div>
+
+                ${samplesSection}
             </div>
 
             <div>
-                ${samplesSection}
+                <div class="section">
+                    <h3>Technologies Used</h3>
+                    <div class="tech-item tech-clickable" style="margin-bottom: 10px;" onclick="showSolutionDetail('${technology.name}')">
+                        <h5>${technology.name}</h5>
+                        <div class="tech-meta">${technology.category} • Click to view details</div>
+                        <p style="margin-top: 8px; font-size: 13px; color: #666;">${technology.description}</p>
+                    </div>
+                </div>
             </div>
         </div>
     `;
