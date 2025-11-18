@@ -4,10 +4,16 @@ const fs = require('fs');
 console.log('=== Testing Data Enrichment ===\n');
 
 // Load all data files
-const campaignsDB = JSON.parse(fs.readFileSync('data/campaigns_db.json', 'utf8'));
+const campaignsMacro = JSON.parse(fs.readFileSync('data/campaign_macro.json', 'utf8'));
+const campaignsMicro = JSON.parse(fs.readFileSync('data/campaign_micro.json', 'utf8'));
 const locationsDB = JSON.parse(fs.readFileSync('data/locations.json', 'utf8'));
 const organisationsDB = JSON.parse(fs.readFileSync('data/organisations.json', 'utf8'));
 const samples = JSON.parse(fs.readFileSync('data/campaign_micro_samples.json', 'utf8'));
+
+// Merge macro and micro campaigns and add target_litter_category field
+const macroCampaignsWithCategory = campaignsMacro.map(c => ({...c, target_litter_category: 'macro'}));
+const microCampaignsWithCategory = campaignsMicro.map(c => ({...c, target_litter_category: 'micro'}));
+const campaignsDB = [...macroCampaignsWithCategory, ...microCampaignsWithCategory];
 
 // Helper functions (same as in script.js)
 function getCampaignById(id) {
