@@ -10,6 +10,8 @@ let demoSitesData = {};
 let solutionsData = {};
 let campaignData = {};
 let campaignMicroSampleData = [];
+let campaignMacroSampleData = [];
+let campaignMacroSampleItemData = [];
 let labAnalysisData = [];
 let qualityControlData = [];
 
@@ -28,11 +30,13 @@ async function loadData() {
         showLoadingState();
 
         // Load all data files in parallel
-        const [demoSites, solutions, campaigns, microSamples, labAnalysis, qualityControl, campaignsDb, locationsDb, organisationsDb] = await Promise.all([
+        const [demoSites, solutions, campaigns, microSamples, macroSamples, macroSampleItems, labAnalysis, qualityControl, campaignsDb, locationsDb, organisationsDb] = await Promise.all([
             fetch('data/demo_sites.json').then(r => r.json()),
             fetch('data/solutions.json').then(r => r.json()),
             fetch('data/campaigns.json').then(r => r.json()),
             fetch('data/campaign_micro_samples.json').then(r => r.json()),
+            fetch('data/campaign_macro_samples.json').then(r => r.json()),
+            fetch('data/campaign_macro_sample_items.json').then(r => r.json()),
             fetch('data/lab_analysis.json').then(r => r.json()),
             fetch('data/quality_control.json').then(r => r.json()),
             fetch('data/campaigns_db.json').then(r => r.json()),
@@ -45,6 +49,8 @@ async function loadData() {
         solutionsData = solutions;
         campaignData = campaigns;
         campaignMicroSampleData = microSamples;
+        campaignMacroSampleData = macroSamples;
+        campaignMacroSampleItemData = macroSampleItems;
         labAnalysisData = labAnalysis;
         qualityControlData = qualityControl;
 
@@ -59,13 +65,16 @@ async function loadData() {
         // Initialize locations and organisations views
         renderLocations();
         renderOrganisations();
+        renderMacroCampaigns();
 
         console.log('✓ All data loaded successfully');
         console.log('✓ Database tables aligned:', {
             campaigns: campaignsDB.length,
             locations: locationsDB.length,
             organisations: organisationsDB.length,
-            samples: campaignMicroSampleData.length
+            microSamples: campaignMicroSampleData.length,
+            macroSamples: campaignMacroSampleData.length,
+            macroSampleItems: campaignMacroSampleItemData.length
         });
         return true;
     } catch (error) {
@@ -113,6 +122,42 @@ function enrichSampleWithRelatedData(sample) {
 
 function getAllEnrichedSamples() {
     return campaignMicroSampleData.map(enrichSampleWithRelatedData);
+}
+
+function enrichMacroSampleWithRelatedData(sample) {
+    const enriched = { ...sample };
+
+    if (sample.campaign_id) {
+        const campaign = getCampaignById(sample.campaign_id);
+        if (campaign) {
+            enriched.campaign = campaign;
+
+            // Matryoshka effect: location and organisation are embedded in campaign
+            if (campaign.location) {
+                enriched.location = campaign.location;
+            }
+            if (campaign.organisation) {
+                enriched.organisation = campaign.organisation;
+            }
+        }
+    }
+
+    // Add items for this macro sample
+    enriched.items = campaignMacroSampleItemData.filter(item => item.campaign_macro_sample_id === sample.id);
+
+    return enriched;
+}
+
+function getAllEnrichedMacroSamples() {
+    return campaignMacroSampleData.map(enrichMacroSampleWithRelatedData);
+}
+
+function getMacroSampleById(id) {
+    return campaignMacroSampleData.find(s => s.id === id);
+}
+
+function getMacroSampleItemsBySampleId(sampleId) {
+    return campaignMacroSampleItemData.filter(item => item.campaign_macro_sample_id === sampleId);
 }
 
 // Loading state UI functions
@@ -262,8 +307,11 @@ function showCampaignDetail(campaignId) {
 
     currentCampaignId = numericId;
 
-    // Get samples for this campaign
-    const campaignSamples = campaignMicroSampleData.filter(sample => sample.campaign_id === numericId);
+    // Get samples for this campaign based on campaign type
+    const isMacroCampaign = campaign.target_litter_category === 'macro';
+    const campaignSamples = isMacroCampaign
+        ? campaignMacroSampleData.filter(sample => sample.campaign_id === numericId)
+        : campaignMicroSampleData.filter(sample => sample.campaign_id === numericId);
 
     // Format dates
     const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('en-US', {
@@ -278,47 +326,98 @@ function showCampaignDetail(campaignId) {
             <h3>Campaign Samples (${campaignSamples.length})</h3>
             <div class="campaign-list">
                 ${campaignSamples.map(sample => {
-                    const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === sample.id);
-                    const qc = qualityControlData.find(q => q.campaign_micro_sample_id === sample.id);
+                    if (isMacroCampaign) {
+                        // Macro sample display
+                        const sampleItems = campaignMacroSampleItemData.filter(item => item.campaign_macro_sample_id === sample.id);
+                        const topItems = sampleItems.slice(0, 3);
 
-                    return `
-                        <div class="campaign-item campaign-clickable" style="margin-bottom: 15px;" onclick="showSampleDetail(${sample.id}, ${numericId})">
-                            <div style="display: flex; justify-content: space-between; align-items: start;">
-                                <div>
-                                    <h4 style="margin: 0 0 5px 0; color: #007bff;">${sample.sample_code}</h4>
-                                    <div class="meta">
-                                        ${sample.station_id} |
-                                        <span class="status-active">${sample.data_type}</span> |
-                                        ${formatDateTime(sample.sampling_date_start)}
+                        return `
+                            <div class="campaign-item campaign-clickable" style="margin-bottom: 15px;" onclick="showMacroSampleDetail(${sample.id}, ${numericId})">
+                                <div style="display: flex; justify-content: space-between; align-items: start;">
+                                    <div>
+                                        <h4 style="margin: 0 0 5px 0; color: #007bff;">${sample.sample_code}</h4>
+                                        <div class="meta">
+                                            ${sample.station_id} |
+                                            <span class="status-active">${sample.data_type}</span> |
+                                            ${formatDateTime(sample.sampling_date_start)}
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 20px; font-weight: 600; color: #dc3545;">${sample.total_litter_ww ? sample.total_litter_ww.toFixed(2) : 'N/A'} kg</div>
+                                        <div style="font-size: 11px; color: #666;">total wet weight</div>
                                     </div>
                                 </div>
-                                <div style="text-align: right;">
-                                    <div style="font-size: 20px; font-weight: 600; color: #28a745;">${sample.particles_total_concentration}</div>
-                                    <div style="font-size: 11px; color: #666;">particles/m³</div>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 10px;">
+                                    <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; font-size: 12px;">
+                                        <div style="color: #666; margin-bottom: 2px;">Method</div>
+                                        <div style="font-weight: 600;">${sample.sampling_method}</div>
+                                    </div>
+                                    <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; font-size: 12px;">
+                                        <div style="color: #666; margin-bottom: 2px;">Dry Weight</div>
+                                        <div style="font-weight: 600;">${sample.total_litter_dw ? sample.total_litter_dw.toFixed(2) : 'N/A'} kg</div>
+                                    </div>
+                                    <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; font-size: 12px;">
+                                        <div style="color: #666; margin-bottom: 2px;">Item Types</div>
+                                        <div style="font-weight: 600;">${sampleItems.length}</div>
+                                    </div>
                                 </div>
+                                ${topItems.length > 0 ? `
+                                    <div style="margin-top: 8px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                                        <div style="font-size: 11px; color: #666; margin-bottom: 5px;">Top Items:</div>
+                                        ${topItems.map(item => `
+                                            <div style="font-size: 12px; margin-bottom: 3px;">
+                                                <strong>${item.name}</strong>: ${item.quantity} items
+                                            </div>
+                                        `).join('')}
+                                        ${sampleItems.length > 3 ? `<div style="font-size: 11px; color: #666; margin-top: 3px;">+${sampleItems.length - 3} more types</div>` : ''}
+                                    </div>
+                                ` : ''}
                             </div>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 10px;">
-                                <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; font-size: 12px;">
-                                    <div style="color: #666; margin-bottom: 2px;">Method</div>
-                                    <div style="font-weight: 600;">${sample.sampling_method}</div>
+                        `;
+                    } else {
+                        // Micro sample display
+                        const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === sample.id);
+                        const qc = qualityControlData.find(q => q.campaign_micro_sample_id === sample.id);
+
+                        return `
+                            <div class="campaign-item campaign-clickable" style="margin-bottom: 15px;" onclick="showSampleDetail(${sample.id}, ${numericId})">
+                                <div style="display: flex; justify-content: space-between; align-items: start;">
+                                    <div>
+                                        <h4 style="margin: 0 0 5px 0; color: #007bff;">${sample.sample_code}</h4>
+                                        <div class="meta">
+                                            ${sample.station_id} |
+                                            <span class="status-active">${sample.data_type}</span> |
+                                            ${formatDateTime(sample.sampling_date_start)}
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 20px; font-weight: 600; color: #28a745;">${sample.particles_total_concentration}</div>
+                                        <div style="font-size: 11px; color: #666;">particles/m³</div>
+                                    </div>
                                 </div>
-                                <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; font-size: 12px;">
-                                    <div style="color: #666; margin-bottom: 2px;">Total Particles</div>
-                                    <div style="font-weight: 600;">${sample.particles_total_count}</div>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 10px;">
+                                    <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; font-size: 12px;">
+                                        <div style="color: #666; margin-bottom: 2px;">Method</div>
+                                        <div style="font-weight: 600;">${sample.sampling_method}</div>
+                                    </div>
+                                    <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; font-size: 12px;">
+                                        <div style="color: #666; margin-bottom: 2px;">Total Particles</div>
+                                        <div style="font-weight: 600;">${sample.particles_total_count}</div>
+                                    </div>
+                                    <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; font-size: 12px;">
+                                        <div style="color: #666; margin-bottom: 2px;">Tire Wear</div>
+                                        <div style="font-weight: 600;">${sample.tire_wear_concentration} µg/L</div>
+                                    </div>
                                 </div>
-                                <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; font-size: 12px;">
-                                    <div style="color: #666; margin-bottom: 2px;">Tire Wear</div>
-                                    <div style="font-weight: 600;">${sample.tire_wear_concentration} µg/L</div>
-                                </div>
+                                ${labAnalysis || qc ? `
+                                    <div style="margin-top: 8px; display: flex; gap: 8px; font-size: 11px;">
+                                        ${labAnalysis ? `<span class="tech-tag" style="background: #28a745;">Lab Analysis</span>` : ''}
+                                        ${qc ? `<span class="tech-tag" style="background: #17a2b8;">QC Data</span>` : ''}
+                                    </div>
+                                ` : ''}
                             </div>
-                            ${labAnalysis || qc ? `
-                                <div style="margin-top: 8px; display: flex; gap: 8px; font-size: 11px;">
-                                    ${labAnalysis ? `<span class="tech-tag" style="background: #28a745;">Lab Analysis</span>` : ''}
-                                    ${qc ? `<span class="tech-tag" style="background: #17a2b8;">QC Data</span>` : ''}
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
+                        `;
+                    }
                 }).join('')}
             </div>
         </div>
@@ -1052,6 +1151,138 @@ function showSampleDetail(sampleId, fromCampaignId = null) {
     document.getElementById('sample-detail').classList.remove('hidden');
 }
 
+function showMacroSampleDetail(sampleId, fromCampaignId = null) {
+    const numericId = typeof sampleId === 'string' ? parseInt(sampleId) : sampleId;
+    const sample = campaignMacroSampleData.find(s => s.id === numericId);
+
+    if (!sample) {
+        console.error(`Macro sample not found with ID: ${sampleId}`);
+        return;
+    }
+
+    if (fromCampaignId) {
+        previousViewBeforeSample = 'campaign-detail';
+        currentCampaignId = fromCampaignId;
+    }
+
+    const campaign = getCampaignById(sample.campaign_id);
+    const sampleItems = campaignMacroSampleItemData.filter(item => item.campaign_macro_sample_id === numericId);
+
+    // Calculate total items
+    const totalItems = sampleItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
+
+    const content = `
+        <div class="breadcrumb">
+            <a onclick="showView('overview')">Overview</a> >
+            ${campaign ? `<a onclick="showCampaignDetail(${campaign.id})">${campaign.title}</a> >` : ''}
+            ${sample.sample_code}
+        </div>
+        <h2>Macro Sample: ${sample.sample_code}</h2>
+
+        <div class="campaign-details">
+            <div>
+                <div class="section">
+                    <h3>Sample Overview</h3>
+                    <p><strong>Sample Code:</strong> ${sample.sample_code}</p>
+                    <p><strong>Campaign:</strong> ${campaign ? `<a onclick="showCampaignDetail(${campaign.id})" style="color: #007bff; cursor: pointer;">${campaign.title}</a>` : 'Unknown'}</p>
+                    <p><strong>Station ID:</strong> ${sample.station_id}</p>
+                    <p><strong>Data Type:</strong> <span class="status-active">${sample.data_type}</span></p>
+                    <p><strong>Monitoring Type:</strong> ${sample.spatial_or_temporal_monitoring}</p>
+                </div>
+
+                <div class="section">
+                    <h3>Sampling Details</h3>
+                    <p><strong>Method:</strong> ${sample.sampling_method}</p>
+                    <p><strong>Instrument:</strong> ${sample.sampling_instrument || 'N/A'}</p>
+                    <p><strong>Protocol:</strong> ${sample.sampling_protocol_reference}</p>
+                    <p><strong>Date/Time:</strong> ${formatDateTime(sample.sampling_date_start)} - ${formatDateTime(sample.sampling_date_end)}</p>
+                    <p><strong>Duration:</strong> ${sample.sampling_duration_hours} hours</p>
+                    <p><strong>Time Reference:</strong> ${sample.sampling_time_reference || 'N/A'}</p>
+                </div>
+
+                <div class="section">
+                    <h3>Location & Survey</h3>
+                    <p><strong>Start Coordinates:</strong> ${formatCoordinate(parseFloat(sample.sampling_latitude_start), parseFloat(sample.sampling_longitude_start))}</p>
+                    <p><strong>End Coordinates:</strong> ${formatCoordinate(parseFloat(sample.sampling_latitude_end), parseFloat(sample.sampling_longitude_end))}</p>
+                    <p><strong>Survey Length:</strong> ${sample.survey_length} m</p>
+                    <p><strong>Survey Width:</strong> ${sample.survey_width} m</p>
+                    ${sample.altitude ? `<p><strong>Altitude:</strong> ${sample.altitude} m</p>` : ''}
+                </div>
+
+                <div class="section">
+                    <h3>Litter Analysis</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div style="background: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #f44336;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Total Wet Weight</div>
+                            <div style="font-weight: 600; font-size: 24px; color: #f44336;">${sample.total_litter_ww ? sample.total_litter_ww.toFixed(2) : 'N/A'}</div>
+                            <div style="font-size: 11px; color: #666;">kg</div>
+                        </div>
+                        <div style="background: #fff3e0; padding: 15px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Total Dry Weight</div>
+                            <div style="font-weight: 600; font-size: 24px; color: #ff9800;">${sample.total_litter_dw ? sample.total_litter_dw.toFixed(2) : 'N/A'}</div>
+                            <div style="font-size: 11px; color: #666;">kg</div>
+                        </div>
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Total Items</div>
+                            <div style="font-weight: 600; font-size: 24px; color: #2196f3;">${totalItems}</div>
+                            <div style="font-size: 11px; color: #666;">individual items</div>
+                        </div>
+                        <div style="background: #f3e5f5; padding: 15px; border-radius: 8px; border-left: 4px solid #9c27b0;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Item Types</div>
+                            <div style="font-weight: 600; font-size: 24px; color: #9c27b0;">${sampleItems.length}</div>
+                            <div style="font-size: 11px; color: #666;">categories</div>
+                        </div>
+                    </div>
+                </div>
+
+                ${sampleItems.length > 0 ? `
+                    <div class="section">
+                        <h3>Litter Items Collected</h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                                <thead>
+                                    <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                        <th style="padding: 12px; text-align: left;">Item Type</th>
+                                        <th style="padding: 12px; text-align: right;">Quantity</th>
+                                        <th style="padding: 12px; text-align: left;">Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${sampleItems.sort((a, b) => (b.quantity || 0) - (a.quantity || 0)).map((item, index) => `
+                                        <tr style="border-bottom: 1px solid #dee2e6; ${index % 2 === 0 ? 'background: #f8f9fa;' : ''}">
+                                            <td style="padding: 10px; font-weight: 600;">${item.name}</td>
+                                            <td style="padding: 10px; text-align: right; color: #dc3545; font-weight: 600;">${item.quantity}</td>
+                                            <td style="padding: 10px; color: #666; font-size: 12px;">${item.notes || '-'}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div class="section">
+                    <h3>Sample Details</h3>
+                    <p><strong>Total Stations:</strong> ${sample.total_stations || 'N/A'}</p>
+                    <p><strong>Total Samples:</strong> ${sample.total_samples || 'N/A'}</p>
+                    <p><strong>Replicate Count:</strong> ${sample.replicate_count || 'N/A'}</p>
+                    ${sample.quadrant_placement ? `<p><strong>Quadrant Placement:</strong> ${sample.quadrant_placement}</p>` : ''}
+                    ${sample.compartment_type ? `<p><strong>Compartment Type:</strong> ${sample.compartment_type}</p>` : ''}
+                    ${sample.notes ? `
+                        <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-left: 3px solid #ffc107; border-radius: 4px;">
+                            <strong>Notes:</strong> ${sample.notes}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('sample-content').innerHTML = content;
+    document.querySelectorAll('.view').forEach(view => view.classList.add('hidden'));
+    document.getElementById('sample-detail').classList.remove('hidden');
+}
+
 function goBackFromSample() {
     if (previousViewBeforeSample === 'campaign-detail' && currentCampaignId) {
         showCampaignDetail(currentCampaignId);
@@ -1118,6 +1349,64 @@ function renderOrganisations() {
                 <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
                     <p style="margin: 0;"><strong>VAT Number:</strong> ${org.vat_number}</p>
                     ${org.emodnet_originator ? '<span class="tech-tag" style="background: #28a745; margin-top: 8px; display: inline-block;">EMODnet Originator</span>' : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = html;
+}
+
+// Macro campaigns rendering function
+function renderMacroCampaigns() {
+    const container = document.getElementById('macro-campaigns-container');
+    const titleElement = document.getElementById('macro-campaigns-title');
+
+    if (!container) return;
+
+    // Filter campaigns by macro category
+    const macroCampaigns = campaignsDB.filter(c => c.target_litter_category === 'macro');
+
+    if (titleElement) {
+        titleElement.textContent = `Macro Campaigns (${macroCampaigns.length})`;
+    }
+
+    if (macroCampaigns.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666; background: #f8f9fa; border-radius: 8px;">
+                <h3 style="color: #333; margin-bottom: 10px;">No Macro Campaigns Yet</h3>
+                <p>Macro litter campaigns will appear here once created.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const formatYear = (dateStr) => new Date(dateStr).getFullYear();
+    const getYearRange = (start, end) => {
+        const startYear = formatYear(start);
+        const endYear = formatYear(end);
+        return startYear === endYear ? startYear : `${startYear}-${endYear}`;
+    };
+
+    const html = macroCampaigns.map(campaign => {
+        const sampleCount = campaignMacroSampleData.filter(s => s.campaign_id === campaign.id).length;
+        const technology = technologyMap[campaign.technology_id] || { name: 'Standard Sampling' };
+
+        return `
+            <div class="campaign-item campaign-clickable" onclick="showCampaignDetail(${campaign.id})">
+                <h4>${campaign.title}</h4>
+                <div class="meta">
+                    ${campaign.campaign_code} |
+                    <span class="status-${campaign.active ? 'active' : 'inactive'}">${campaign.active ? 'Active' : 'Inactive'}</span> |
+                    ${campaign.location.location} |
+                    ${getYearRange(campaign.campaign_date_start, campaign.campaign_date_end)}
+                </div>
+                <p>${campaign.description}</p>
+                <div class="tech-tags">
+                    <span class="tech-tag">${technology.name}</span>
+                    <span class="tech-tag">${campaign.number_of_sampling_stations} Sampling Stations</span>
+                    ${sampleCount > 0 ? `<span class="tech-tag" style="background: #28a745;">${sampleCount} Samples</span>` : ''}
+                    <span class="tech-tag">${campaign.organisation.name}</span>
                 </div>
             </div>
         `;
