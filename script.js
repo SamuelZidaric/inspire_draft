@@ -74,6 +74,7 @@ async function loadData() {
         renderLocations();
         renderOrganisations();
         renderMacroCampaigns();
+        renderMicroCampaigns();
         renderOverviewCampaignTypes();
 
         console.log('✓ All data loaded successfully');
@@ -1511,6 +1512,64 @@ function renderMacroCampaigns() {
 
     const html = macroCampaigns.map(campaign => {
         const sampleCount = campaignMacroSampleData.filter(s => s.campaign_id === campaign.id).length;
+        const technology = technologyMap[campaign.technology_id] || { name: 'Standard Sampling' };
+
+        return `
+            <div class="campaign-item campaign-clickable" onclick="showCampaignDetail(${campaign.id})">
+                <h4>${campaign.title}</h4>
+                <div class="meta">
+                    ${campaign.campaign_code} |
+                    <span class="status-${campaign.active ? 'active' : 'inactive'}">${campaign.active ? 'Active' : 'Inactive'}</span> |
+                    ${campaign.location.location} |
+                    ${getYearRange(campaign.campaign_date_start, campaign.campaign_date_end)}
+                </div>
+                <p>${campaign.description}</p>
+                <div class="tech-tags">
+                    <span class="tech-tag">${technology.name}</span>
+                    <span class="tech-tag">${campaign.number_of_sampling_stations} Sampling Stations</span>
+                    ${sampleCount > 0 ? `<span class="tech-tag" style="background: #28a745;">${sampleCount} Samples</span>` : ''}
+                    <span class="tech-tag">${campaign.organisation.name}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = html;
+}
+
+// Micro campaigns rendering function
+function renderMicroCampaigns() {
+    const container = document.getElementById('micro-campaigns-container');
+    const titleElement = document.getElementById('micro-campaigns-title');
+
+    if (!container) return;
+
+    // Filter campaigns by micro category
+    const microCampaigns = campaignsDB.filter(c => c.target_litter_category === 'micro');
+
+    if (titleElement) {
+        titleElement.textContent = `Micro Campaigns (${microCampaigns.length})`;
+    }
+
+    if (microCampaigns.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666; background: #f8f9fa; border-radius: 8px;">
+                <h3 style="color: #333; margin-bottom: 10px;">No Micro Campaigns Yet</h3>
+                <p>Microplastic campaigns will appear here once created.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const formatYear = (dateStr) => new Date(dateStr).getFullYear();
+    const getYearRange = (start, end) => {
+        const startYear = formatYear(start);
+        const endYear = formatYear(end);
+        return startYear === endYear ? startYear : `${startYear}-${endYear}`;
+    };
+
+    const html = microCampaigns.map(campaign => {
+        const sampleCount = campaignMicroSampleData.filter(s => s.campaign_id === campaign.id).length;
         const technology = technologyMap[campaign.technology_id] || { name: 'Standard Sampling' };
 
         return `
