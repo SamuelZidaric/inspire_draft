@@ -60,17 +60,8 @@
 
                 <div class="section">
                     <h3>Campaign Types</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div onclick="showView('micro')" style="cursor: pointer; padding: 20px; border: 2px solid #007bff; border-radius: 8px; text-align: center;">
-                            <h4>Micro Campaigns</h4>
-                            <div class="number" style="color: #007bff;">4</div>
-                            <p>Microplastic monitoring campaigns</p>
-                        </div>
-                        <div onclick="showView('macro')" style="cursor: pointer; padding: 20px; border: 2px solid #6c757d; border-radius: 8px; text-align: center; opacity: 0.6;">
-                            <h4>Macro Campaigns</h4>
-                            <div class="number" style="color: #6c757d;">0</div>
-                            <p>Coming soon</p>
-                        </div>
+                    <div id="campaign-types-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <!-- Campaign types will be rendered dynamically -->
                     </div>
                 </div>
             </div>
