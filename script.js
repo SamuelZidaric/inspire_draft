@@ -10,6 +10,7 @@ let demoSitesData = {};
 let solutionsData = {};
 let campaignData = {};
 let campaignMicroSampleData = [];
+let campaignMicroSampleItemData = [];
 let campaignMacroSampleData = [];
 let campaignMacroSampleItemData = [];
 let labAnalysisData = [];
@@ -30,11 +31,12 @@ async function loadData() {
         showLoadingState();
 
         // Load all data files in parallel
-        const [demoSites, solutions, campaigns, microSamples, macroSamples, macroSampleItems, labAnalysis, qualityControl, campaignsDb, locationsDb, organisationsDb] = await Promise.all([
+        const [demoSites, solutions, campaigns, microSamples, microSampleItems, macroSamples, macroSampleItems, labAnalysis, qualityControl, campaignsDb, locationsDb, organisationsDb] = await Promise.all([
             fetch('data/demo_sites.json').then(r => r.json()),
             fetch('data/solutions.json').then(r => r.json()),
             fetch('data/campaigns.json').then(r => r.json()),
             fetch('data/campaign_micro_samples.json').then(r => r.json()),
+            fetch('data/campaign_micro_sample_items.json').then(r => r.json()),
             fetch('data/campaign_macro_samples.json').then(r => r.json()),
             fetch('data/campaign_macro_sample_items.json').then(r => r.json()),
             fetch('data/lab_analysis.json').then(r => r.json()),
@@ -49,6 +51,7 @@ async function loadData() {
         solutionsData = solutions;
         campaignData = campaigns;
         campaignMicroSampleData = microSamples;
+        campaignMicroSampleItemData = microSampleItems;
         campaignMacroSampleData = macroSamples;
         campaignMacroSampleItemData = macroSampleItems;
         labAnalysisData = labAnalysis;
@@ -74,6 +77,7 @@ async function loadData() {
             locations: locationsDB.length,
             organisations: organisationsDB.length,
             microSamples: campaignMicroSampleData.length,
+            microSampleItems: campaignMicroSampleItemData.length,
             macroSamples: campaignMacroSampleData.length,
             macroSampleItems: campaignMacroSampleItemData.length
         });
@@ -159,6 +163,10 @@ function getMacroSampleById(id) {
 
 function getMacroSampleItemsBySampleId(sampleId) {
     return campaignMacroSampleItemData.filter(item => item.campaign_macro_sample_id === sampleId);
+}
+
+function getMicroSampleItemsBySampleId(sampleId) {
+    return campaignMicroSampleItemData.filter(item => item.campaign_micro_sample_id === sampleId);
 }
 
 // Loading state UI functions
@@ -1036,6 +1044,35 @@ function showSampleDetail(sampleId, fromCampaignId = null) {
     const campaign = getCampaignById(sample.campaign_id);
     const labAnalysis = labAnalysisData.find(la => la.campaign_micro_sample_id === numericId);
     const qc = qualityControlData.find(q => q.campaign_micro_sample_id === numericId);
+    const sampleItems = getMicroSampleItemsBySampleId(numericId);
+
+    // Particle type mapping (simplified for display)
+    const particleTypeNames = {
+        1: 'Fragment',
+        2: 'Fiber',
+        3: 'Film',
+        4: 'Other'
+    };
+
+    const particleColorNames = {
+        1: 'Blue',
+        2: 'Transparent',
+        3: 'Green',
+        4: 'Orange',
+        5: 'Brown',
+        6: 'Red',
+        7: 'Black',
+        8: 'White'
+    };
+
+    const polymerTypeNames = {
+        1: 'PET',
+        2: 'PE',
+        3: 'Film',
+        4: 'Polyester',
+        5: 'PP',
+        6: 'LDPE'
+    };
 
     const content = `
         <div class="breadcrumb">
@@ -1122,6 +1159,59 @@ function showSampleDetail(sampleId, fromCampaignId = null) {
                         </div>
                     </div>
                 </div>
+
+                ${sampleItems.length > 0 ? `
+                    <div class="section">
+                        <h3>Individual Particles Analyzed (${sampleItems.length})</h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                <thead>
+                                    <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                        <th style="padding: 10px; text-align: left;">Particle Code</th>
+                                        <th style="padding: 10px; text-align: left;">Type</th>
+                                        <th style="padding: 10px; text-align: left;">Polymer</th>
+                                        <th style="padding: 10px; text-align: left;">Color</th>
+                                        <th style="padding: 10px; text-align: right;">Length (µm)</th>
+                                        <th style="padding: 10px; text-align: right;">Width (µm)</th>
+                                        <th style="padding: 10px; text-align: right;">Mass (µg)</th>
+                                        <th style="padding: 10px; text-align: center;">Plastic</th>
+                                        <th style="padding: 10px; text-align: center;">Match</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${sampleItems.map((item, index) => `
+                                        <tr style="border-bottom: 1px solid #dee2e6; ${index % 2 === 0 ? 'background: #f8f9fa;' : ''}">
+                                            <td style="padding: 8px; font-family: monospace; font-size: 11px;">${item.particle_code}</td>
+                                            <td style="padding: 8px;">
+                                                <span style="display: inline-block; padding: 2px 8px; background: #e3f2fd; border-radius: 3px; font-size: 11px; font-weight: 600;">
+                                                    ${particleTypeNames[item.particle_type_id] || 'Unknown'}
+                                                </span>
+                                            </td>
+                                            <td style="padding: 8px; font-weight: 600; color: #2196f3;">${item.is_plastic ? (polymerTypeNames[item.particle_polymer_type_id] || 'N/A') : '-'}</td>
+                                            <td style="padding: 8px;">
+                                                <span style="display: inline-block; padding: 2px 8px; background: #f1f1f1; border-radius: 3px; font-size: 11px;">
+                                                    ${particleColorNames[item.particle_colour_id] || 'Unknown'}
+                                                </span>
+                                            </td>
+                                            <td style="padding: 8px; text-align: right;">${item.particle_length ? item.particle_length.toFixed(1) : '-'}</td>
+                                            <td style="padding: 8px; text-align: right;">${item.particle_width ? item.particle_width.toFixed(1) : '-'}</td>
+                                            <td style="padding: 8px; text-align: right; font-weight: 600;">${item.particle_mass ? item.particle_mass.toFixed(2) : '-'}</td>
+                                            <td style="padding: 8px; text-align: center;">
+                                                ${item.is_plastic ? '<span style="color: #dc3545; font-weight: 600;">✓</span>' : '<span style="color: #666;">-</span>'}
+                                            </td>
+                                            <td style="padding: 8px; text-align: center; color: #28a745; font-weight: 600; font-size: 11px;">${item.instrument_match || '-'}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="margin-top: 10px; padding: 10px; background: #e3f2fd; border-radius: 4px; font-size: 12px; color: #666;">
+                            <strong>Note:</strong> Showing ${sampleItems.length} analyzed particles out of ${sample.particles_total_count} total particles in this sample.
+                            ${sampleItems.filter(i => i.is_plastic).length} particles confirmed as plastic
+                            (${((sampleItems.filter(i => i.is_plastic).length / sampleItems.length) * 100).toFixed(1)}% of analyzed).
+                        </div>
+                    </div>
+                ` : ''}
 
                 <div class="section">
                     <h3>Sample Details</h3>
