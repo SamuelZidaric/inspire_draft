@@ -66,6 +66,7 @@ async function loadData() {
         renderLocations();
         renderOrganisations();
         renderMacroCampaigns();
+        renderOverviewCampaignTypes();
 
         console.log('✓ All data loaded successfully');
         console.log('✓ Database tables aligned:', {
@@ -1353,6 +1354,31 @@ function renderOrganisations() {
             </div>
         `;
     }).join('');
+
+    container.innerHTML = html;
+}
+
+// Overview campaign types rendering function
+function renderOverviewCampaignTypes() {
+    const container = document.getElementById('campaign-types-grid');
+    if (!container || !campaignsDB || campaignsDB.length === 0) return;
+
+    // Count campaigns by type
+    const microCount = campaignsDB.filter(c => c.target_litter_category === 'micro').length;
+    const macroCount = campaignsDB.filter(c => c.target_litter_category === 'macro').length;
+
+    const html = `
+        <div onclick="showView('micro')" style="cursor: pointer; padding: 20px; border: 2px solid #007bff; border-radius: 8px; text-align: center;">
+            <h4>Micro Campaigns</h4>
+            <div class="number" style="color: #007bff;">${microCount}</div>
+            <p>Microplastic monitoring campaigns</p>
+        </div>
+        <div onclick="showView('macro')" style="cursor: pointer; padding: 20px; border: 2px solid #dc3545; border-radius: 8px; text-align: center;">
+            <h4>Macro Campaigns</h4>
+            <div class="number" style="color: #dc3545;">${macroCount}</div>
+            <p>Macrolitter monitoring campaigns</p>
+        </div>
+    `;
 
     container.innerHTML = html;
 }
