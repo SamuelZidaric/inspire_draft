@@ -4,10 +4,14 @@ const fs = require('fs');
 console.log('=== Data Alignment Verification (Matryoshka Structure) ===\n');
 
 // Load all data files
-const campaigns = JSON.parse(fs.readFileSync('data/campaigns_db.json', 'utf8'));
+const campaignsMacro = JSON.parse(fs.readFileSync('data/campaign_macro.json', 'utf8'));
+const campaignsMicro = JSON.parse(fs.readFileSync('data/campaign_micro.json', 'utf8'));
 const locations = JSON.parse(fs.readFileSync('data/locations.json', 'utf8'));
 const organisations = JSON.parse(fs.readFileSync('data/organisations.json', 'utf8'));
 const samples = JSON.parse(fs.readFileSync('data/campaign_micro_samples.json', 'utf8'));
+
+// Merge macro and micro campaigns
+const campaigns = [...campaignsMacro, ...campaignsMicro];
 
 console.log('Data loaded:');
 console.log(`- Campaigns: ${campaigns.length}`);

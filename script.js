@@ -31,7 +31,7 @@ async function loadData() {
         showLoadingState();
 
         // Load all data files in parallel
-        const [demoSites, solutions, campaigns, microSamples, microSampleItems, macroSamples, macroSampleItems, labAnalysis, qualityControl, campaignsDb, locationsDb, organisationsDb] = await Promise.all([
+        const [demoSites, solutions, campaigns, microSamples, microSampleItems, macroSamples, macroSampleItems, labAnalysis, qualityControl, campaignsMacro, campaignsMicro, locationsDb, organisationsDb] = await Promise.all([
             fetch('data/demo_sites.json').then(r => r.json()),
             fetch('data/solutions.json').then(r => r.json()),
             fetch('data/campaigns.json').then(r => r.json()),
@@ -41,7 +41,8 @@ async function loadData() {
             fetch('data/campaign_macro_sample_items.json').then(r => r.json()),
             fetch('data/lab_analysis.json').then(r => r.json()),
             fetch('data/quality_control.json').then(r => r.json()),
-            fetch('data/campaigns_db.json').then(r => r.json()),
+            fetch('data/campaign_macro.json').then(r => r.json()),
+            fetch('data/campaign_micro.json').then(r => r.json()),
             fetch('data/locations.json').then(r => r.json()),
             fetch('data/organisations.json').then(r => r.json())
         ]);
@@ -58,7 +59,11 @@ async function loadData() {
         qualityControlData = qualityControl;
 
         // Assign database-aligned structures
-        campaignsDB = campaignsDb;
+        // Merge macro and micro campaigns and add target_litter_category field
+        const macroCampaignsWithCategory = campaignsMacro.map(c => ({...c, target_litter_category: 'macro'}));
+        const microCampaignsWithCategory = campaignsMicro.map(c => ({...c, target_litter_category: 'micro'}));
+        campaignsDB = [...macroCampaignsWithCategory, ...microCampaignsWithCategory];
+
         locationsDB = locationsDb;
         organisationsDB = organisationsDb;
 
